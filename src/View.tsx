@@ -1,29 +1,39 @@
-import React, { useEffect } from 'react';
-import {Stack, Node} from './Utils/useStack'
-import {useGraph} from './Utils/useGraph'
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
+import {useGraph, Vertex} from './Utils/useGraph'
 
-let  View = ({className,stackArr}:{className: string, stackArr: Array<Node>})=>{
 
-    console.log(stackArr);
-    let {graph, createGraphFromDimension, getVertices} = useGraph();
-    useEffect(()=>{
-        createGraphFromDimension(5,5);
-    },[])
+let Node = ({vertex, onClick, onMouseUp,onMouseEnter}: {vertex: Vertex,onClick: ()=>void, onMouseUp:()=>void, onMouseEnter: ()=>void }): JSX.Element=>{
+
+    return <>
+        <span 
+        onMouseEnter={onMouseEnter} 
+        onMouseUp={()=>{console.log("Mouse is Up");onMouseUp()}} 
+        onMouseDown={()=>{console.log("making",vertex,"wall"); onClick()}} 
+        className={"w-full h-full p-2 border border-gray-500 overflow-hidden " +(vertex.isWall?"bg-slate-500":"") /*+vertex.isWall?"bg-slate-500":""*/}></span>
+    </>
+
+}
+
+let  View = ({className}:{className: string})=>{
+
+    let {graph, createGraphFromDimension, getVertices, makeWall} = useGraph(15,30);
+    let [mouseDown,setMouseDown]= useState(false);
     
-
-    return <div className={" "+className}>View
-    {
-           stackArr.map((node,i)=><div key={i} className='text-white'>{node.val}</div>)
+    function handleMouseEnter(v: Vertex){
+        if(mouseDown) makeWall(v);
     }
+
+    return <div className={"p-4 "+className}>
+    <div className='grid grid-cols-30 w-full h-full '>
         {
             getVertices(graph).map((v,i)=>{
-                return <>
-                    <span className='w-10 h-10 p-2 bg-red-500'>{v.row+","+v.col}</span> {(v.col == 4)&&<br />}
-                </>
+                return <Node key={i} vertex={v} 
+                onClick={()=>{setMouseDown(true)}} 
+                onMouseUp={()=>{setMouseDown(false)}} 
+                onMouseEnter={()=>{handleMouseEnter(v)}} />
             })
         }
-
-        {getVertices(graph).map((vertex,i)=>(<div key={i}><h1>{vertex.row},{vertex.col}</h1>{graph.AdjList.get(vertex)?.map((n,j)=><li key={j}>({n.row+","+n.col})</li>)}</div>))}
+    </div>
     </div>
 }
 

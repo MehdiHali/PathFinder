@@ -55,13 +55,7 @@ function App() {
      <Header className={"h-[10%] bg-primary"}/>
      <div className='flex h-[90vh] '>
       <Sidebar className={"w-[20%] bg-primary hidden sm:block"} />
-      <div>
-        aldsjsf
-        {peak(stack)?.val.toString()}
-      <button onClick={()=>setCount((count)=>count+1)} className='p-4 bg-gray-400'>+++</button>
-      <button onClick={()=>pop(stack)} className='p-4 bg-gray-200'>---</button>
-      </div>
-      <View stackArr={toArray(stack)} className={"w-full bg-gray-800 h-full"}/>
+      <View  className={"w-full bg-gray-100 h-full"}/>
      </div>
     </div>
   );

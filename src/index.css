@@ -15,3 +15,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.grid-cols-30 {
+  grid-template-columns: repeat(30, minmax(0, 1fr));
+}
