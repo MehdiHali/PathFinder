@@ -2,13 +2,14 @@ import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
 import {useGraph, Vertex} from './Utils/useGraph'
 
 
-let Node = ({vertex, onClick, onMouseUp,onMouseEnter}: {vertex: Vertex,onClick: ()=>void, onMouseUp:()=>void, onMouseEnter: ()=>void }): JSX.Element=>{
+let Node = ({vertex, onClick, onMouseUp,onMouseEnter,onMouseDown}: {vertex: Vertex,onClick: ()=>void, onMouseUp:()=>void, onMouseEnter: ()=>void, onMouseDown: ()=>void }): JSX.Element=>{
 
     return <>
         <span 
+        onMouseDown={onMouseDown}
         onMouseEnter={onMouseEnter} 
         onMouseUp={()=>{console.log("Mouse is Up");onMouseUp()}} 
-        onMouseDown={()=>{console.log("making",vertex,"wall"); onClick()}} 
+        onClick={()=>{console.log("making",vertex,"wall"); onClick()}} 
         className={"w-full h-full p-2 border border-gray-500 overflow-hidden " +(vertex.isWall?"bg-slate-500":"") /*+vertex.isWall?"bg-slate-500":""*/}></span>
     </>
 
@@ -28,7 +29,8 @@ let  View = ({className}:{className: string})=>{
         {
             getVertices(graph).map((v,i)=>{
                 return <Node key={i} vertex={v} 
-                onClick={()=>{setMouseDown(true)}} 
+                onMouseDown={()=>{setMouseDown(true)}} 
+                onClick={()=>{makeWall(v)}} 
                 onMouseUp={()=>{setMouseDown(false)}} 
                 onMouseEnter={()=>{handleMouseEnter(v)}} />
             })
