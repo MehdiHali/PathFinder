@@ -5,32 +5,19 @@ import Sidebar from './Sidebar';
 import Stack from './Utils/Stack';
 import { ReactNode, useEffect, useState } from 'react';
 import { setConstantValue } from 'typescript';
-import {useStack} from './Utils/useStack'
+// import {useStack} from './Utils/useStack'
 // import {useGraph} from './Utils/useGraph'
 
 function App() {
 
     let [count, setCount] = useState(0);
 
-    let {stack,push,pop,peak,isEmpty,getSize,toArray} = useStack();
-    // let {graph,getVertices, createGraphFromDimension} = useGraph();
-    // useEffect(()=>{
-    //   createGraphFromDimension(5,5);
-    // },[])
-    // let vertices = graph.AdjList.entries();
-
-    // useEffect(()=>{
-    //   console.log("adjList ", graph.AdjList);
-    //   console.log("Entries ",graph.AdjList.entries());
-    //   console.log("Keys ",graph.AdjList.keys());
-    // },[graph])
-    
     useEffect(()=>{
 
     },[])
  
     useEffect(()=>{
-      push(stack,count);
+      // push(stack,count);
     },[count])
 
     // function push(n: number){
