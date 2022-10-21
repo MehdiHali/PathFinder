@@ -15,9 +15,14 @@ interface Graph {
     numEdges: number ;
     AdjList: Map<Vertex,Array<Vertex>> ;
     verticesSet: Set<Vertex>;
+    walls: Vertex[];
 }
 
-
+/**
+ * @NEXT maybe keep track of the walls in a state
+ * so that i can reset the grid 
+ * 
+ */
 
 /**
  * @getVertex when you want to fetch a vertex an keeping the same reference 
@@ -27,6 +32,8 @@ interface Graph {
  * @setToArray use this to get the array of vertices from the @verticesSet
  * @listHas use this method to test the existence of avertex in the adjList
  * @removeEdge just take a list and remove the edge without setting state or rerendering
+ * @IMPORTANT When ever you modify the adjacency list make sure 
+ * you are not messing up the neighbors order
  */
 
 function useGraph(cols?: number,rows?: number){
@@ -35,7 +42,8 @@ function useGraph(cols?: number,rows?: number){
         numVertices: 0,
         numEdges: 0,
         AdjList: new Map<Vertex,Array<Vertex>>,
-        verticesSet: new Set<Vertex>()
+        verticesSet: new Set<Vertex>(),
+        walls: [] as Vertex[]
         } as Graph
     );
 
@@ -86,12 +94,14 @@ function useGraph(cols?: number,rows?: number){
         let numEdges = 0;
         let numVertices = cols*rows;
         let verticesSet = new Set<Vertex>;
+        let walls = [] as Vertex[];
 
         let newGraph: Graph = {
             AdjList: newAdjList,
              numEdges: numEdges,
               numVertices: numVertices,
-              verticesSet: verticesSet
+              verticesSet: verticesSet,
+              walls: walls,
             }
         // fill the vertices set
         for(let row = 0; row<rows; row++)
@@ -199,11 +209,80 @@ function useGraph(cols?: number,rows?: number){
             // the decrease in the number of edges will trigger the setState rerender
             // - even tough we are calling the setGraph every time, React will batch those 
             // setStates into one to increase performance
-            setGraph(graph=>({...graph,numEdges:graph.numEdges-removedEdgesCount,AdjList: newAdjList}));
+            setGraph(graph=>({...graph,numEdges:graph.numEdges-removedEdgesCount,AdjList: newAdjList,walls: [...graph.walls,v]}));
     }
 
-    
-    // Hook debugging
+    /**
+     * Converts a wall to route vertex
+     */
+    function makeRoute(v: Vertex){
+        if(!v.isWall) return;
+        console.log("USEGRAPH::: making ",v,"a route");
+        
+        let newAdjList = new Map(graph.AdjList);
+        v.isWall = false;
+        let neighbors: Vertex[] = getNeighborsInOrder(v);
+        let edgesCount:number = neighbors.length;
+        
+        console.log(v," neighbors are",neighbors);
+            
+        // making the vertex neighbor to its neighbors
+        neighbors.forEach(n=>{
+            if(!newAdjList.get(n)?.includes(v)){
+                // IMPORTANT
+                // WE MUST INSERT THE NEIGHBORS IN ORDERS
+                // BECAUSE IF WE JUST PUSHED THE VERTEX
+                // WE WILL MESS THE ORDER
+                let nNeighbors = getNeighborsInOrder(n);
+                newAdjList.set(n,nNeighbors);
+            }
+            // newAdjList.get(n)?.push(v);
+        })
+
+        // fillign the neighbors of the vertex
+        newAdjList.set(v,neighbors);
+        console.log("USEGRAPH::: new ADJList",newAdjList);
+
+        let newWalls: Vertex[] = graph.walls.filter(w=>w!=v);
+        setGraph(graph=>({...graph,numEdges: graph.numEdges+edgesCount, AdjList: newAdjList, walls: newWalls}))
+        }
+        
+
+    /**
+     * for consistency, we need to always get the neighbors
+     * and set them in the same order 
+     * @param v : Vertex
+     * @returns Vertex[]
+     */
+    function getNeighborsInOrder(v: Vertex): Vertex[]{
+
+        let neighbors: Vertex[] = [];
+        if(cols != undefined && rows != undefined){
+            if(v.row >0 ){
+                neighbors.push(getVertex(graph,{row: v.row-1, col: v.col} as Vertex));
+            }
+            if(v.col > 0){
+                neighbors.push(getVertex(graph,{row: v.row, col: v.col-1} as Vertex));
+            }
+            if(v.row < rows-1){
+                neighbors.push(getVertex(graph,{row: v.row+1, col: v.col} as Vertex));
+            }
+            if(v.col < cols-1){
+                neighbors.push(getVertex(graph,{row: v.row, col: v.col+1} as Vertex));
+            }
+    }
+    return neighbors;
+    }
+
+    function resetGrid(){
+        console.log("USEGRAPH::: Resetting the grid");
+        console.log("USEGRAPH::: Current walls", graph.walls);
+        if(cols!= undefined && rows != undefined)
+        createGraphFromDimension(cols,rows); 
+        // graph.walls.forEach(w=>{
+        //     makeRoute(w);
+        // })
+    }
 
     // if a dimension is provided then create a graph from that dimension
     useEffect(()=>{
@@ -213,7 +292,7 @@ function useGraph(cols?: number,rows?: number){
 
     // logging the graph changes
     useEffect(()=>{
-        console.log("After setting the graph -=-=-=-=-=-=");
+        console.log("USEGRAPH::: After setting the graph -=-=-=-=-=-=");
 
         // let trueNUmEdges = 0;
         // graph.AdjList.forEach((n,v)=>{
@@ -224,15 +303,15 @@ function useGraph(cols?: number,rows?: number){
         // console.log("***the true number of edges : ",trueNUmEdges);
         
         
-        console.log("graph",graph);
+        console.log("USEGRAPH::: new graph ",graph);
         
         // console.log(listHas({row: 0,col: 0,isWall}));
-        console.log(getNeighbors(graph,{row: 0,col:1} as Vertex) );
-        console.log(getNeighbors(graph,{row: 1,col:0} as Vertex) );
+        // console.log(getNeighbors(graph,{row: 0,col:1} as Vertex) );
+        // console.log(getNeighbors(graph,{row: 1,col:0} as Vertex) );
     },[graph])
 
 
-    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall};
+    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, resetGrid};
 }
 
 // ============== Helper Fnuctions =============
@@ -257,7 +336,7 @@ function useGraph(cols?: number,rows?: number){
             console.log("GET NEIGHBORS::: there is no neighbors for ",v);
             
         }
-        console.log("GET NEIGHBORS::: vertex is", v, "neighbors are", )
+        console.log("GET NEIGHBORS::: vertex is", v, "neighbors are",neighbors )
         return neighbors;
     }
 
@@ -289,5 +368,7 @@ function useGraph(cols?: number,rows?: number){
         })
         return found;
     }
+    
+
 
 export  {useGraph, getNeighbors, getVertex, listHas, setToArray, type Graph, type Vertex};
