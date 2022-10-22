@@ -1,25 +1,44 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Children, createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
 import Logo from './Components/Logo';
 import { action } from './Utils/types';
 import Mosque from './assets/Mosque.png'
 import Castle from './assets/Castle.png'
+import Location from './assets/Location.png'
+import MyLocation from './assets/MyLocation.png'
+
+    let ToolBoxContext = createContext({} as any);
+
+ ToolBox.Tool = function Tool<T>({value, onClick, children}:{value: T, selected: boolean, onClick?: (value: T,...params: any[])=>void, children: ReactNode}){
+    // const [value,setValue] : [T, Dispatch<SetStateAction<T>>] = useState("" as T);
+
+    let {selected, setSelected} = useContext(ToolBoxContext);
+
+    return <li onClick={()=>{setSelected(value);onClick && onClick(value)}} className={"flex space-x-4 h-8 p-1 rounded-md cursor-pointer hover:border-2 border-yellow-400 hover:bg-orange-400 hover:border-dashed "+((selected === value)&&" bg-orange-400")}>
+            {children}
+        </li>
+
+}
 
 
-function ToolBox<T> ({setAction}:{setAction: Dispatch<SetStateAction<action>>}){
+function ToolBox<T> ({onChange, defaultValue, children}:{onChange: Dispatch<SetStateAction<T>>, defaultValue: T, children: ReactNode}){
 
-    const [selected,setSelected]: [T, Dispatch<SetStateAction<T>>] = useState("" as T);
+    const [selected,setSelected]: [T, Dispatch<SetStateAction<T>>] = useState(defaultValue);
 
     function handleChange(ev: any){
         ev.preventDefault();
-        setAction(ev.target.value as action);
+        setSelected(ev.target.value);
     }
 
-    return  <form action="" onChange={handleChange} className={"flex items-center space-x-4 list-none "} >
-                <li className="flex space-x-4 h-6"><input name="action" value={"WALL"} type={"radio"} className={""}/><span className='flex'><img className='h-6' src={Castle} /></span> </li>
-                <li className=""><input name="action" value={"ROUTE"} type={"radio"} className={"mr-2"}/><label>CLEAR</label> </li>
-                <li className="text-green-600 p-1 rounded-sm"><input name="action" value={"START"} type={"radio"} className={"mr-2"}/><label>SET START</label> </li>
-                <li className="text-red-600 p-1 rounded-sm"><input name="action" value={"GOAL"} type={"radio"} className={"mr-2"}/><label>SET GOAL</label> </li>
-            </form>
+    useEffect(()=>{
+        onChange(selected);
+    }, [selected]);
+
+    return <ToolBoxContext.Provider value={{selected,setSelected}}>
+    
+            <div  onChange={handleChange} className={"flex items-center space-x-4 list-none "} >
+                {children}
+            </div>
+            </ToolBoxContext.Provider>
 }
 
 const Header = ({className, visualize, setAction, onClearGrid}: {className: string, visualize: boolean,setAction: Dispatch<SetStateAction<action>>, onClearGrid:Dispatch<SetStateAction<boolean>>})=>{
@@ -28,7 +47,17 @@ const Header = ({className, visualize, setAction, onClearGrid}: {className: stri
     return <div className={'bg-gray-300 p-4 flex justify-between '+className}>
         <Logo className={"w-20 h-20 object-contain"}/>
 
-        <ToolBox<action> setAction={setAction}/> 
+        <ToolBox<action> onChange={setAction} defaultValue={"WALL"}>
+            <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
+                <img src={Castle} />
+            </ToolBox.Tool>
+            <ToolBox.Tool selected={false} value={"START"}>
+                <img src={MyLocation} />
+            </ToolBox.Tool>
+            <ToolBox.Tool selected={false} value={"GOAL"}>
+                <img src={Location} />
+            </ToolBox.Tool>
+        </ToolBox> 
 
         <button className='btn' onClick={()=>onClearGrid(true)} >Clear Grid</button>
         <span>{visualize?"Visualizing...":"stopped."}</span>

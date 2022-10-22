@@ -37,8 +37,8 @@ let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouse
 
                     { 
                     vertex.isWall ? <img className='w-6  mx-auto object-cover' src={Castle} />
-                    :isStart ? <img className='w-full  mx-auto object-cover' src={MyLocation} />
-                    :isGoal ? <img className='w-full  mx-auto object-cover' src={HomePin} />
+                    :isStart ? <img className='  mx-auto object-cover' src={MyLocation} />
+                    :isGoal ? <img className='  mx-auto object-cover' src={HomePin} />
                     : ""
                     }
             </div>
