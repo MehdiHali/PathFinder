@@ -11,6 +11,7 @@ import { clear } from 'console';
 function App() {
 
     const [visualize, setVisualize]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
+    const [resetGrid, setResetGrid]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     const [clearGrid, setClearGrid]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     let [action,setAction]: [action: action,setAction: Dispatch<SetStateAction<action>>] = useState("WALL" as action);
 
@@ -43,8 +44,8 @@ function App() {
     <div className="App h-screen min-h-screen">
      <Header  onClearGrid={setClearGrid} setAction={setAction} visualize={visualize} className={"h-[10%] bg-primary"}/>
      <div className='flex h-[90vh] '>
-      <Sidebar onVisualize={()=>!visualize&&setVisualize(true)} onReset={()=>visualize&&setVisualize(false)} className={"w-[20%] bg-primary hidden sm:block"} />
-      <Grid clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} visualize={visualize} setVisualize={setVisualize}  className={"w-full bg-gray-100 h-full"}/>
+      <Sidebar onVisualize={()=>!visualize&&setVisualize(true)} onReset={()=>setResetGrid(true)} className={"w-[20%] bg-primary hidden sm:block"} />
+      <Grid triggerResetGrid={resetGrid} setResetGrid={setResetGrid} clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} visualize={visualize} setVisualize={setVisualize}  className={"w-full bg-gray-100 h-full"}/>
      </div>
     </div>
   );

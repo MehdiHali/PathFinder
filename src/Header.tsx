@@ -44,8 +44,8 @@ function ToolBox<T> ({onChange, defaultValue, children}:{onChange: Dispatch<SetS
 const Header = ({className, visualize, setAction, onClearGrid}: {className: string, visualize: boolean,setAction: Dispatch<SetStateAction<action>>, onClearGrid:Dispatch<SetStateAction<boolean>>})=>{
 
 
-    return <div className={'bg-gray-300 p-4 flex justify-between '+className}>
-        <Logo className={"w-20 h-20 object-contain"}/>
+    return <div className={'bg-gray-300 p-4 flex justify-between items-center '+className}>
+        <Logo className={" w-28  object-contain"}/>
 
         <ToolBox<action> onChange={setAction} defaultValue={"WALL"}>
             <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
@@ -59,8 +59,8 @@ const Header = ({className, visualize, setAction, onClearGrid}: {className: stri
             </ToolBox.Tool>
         </ToolBox> 
 
+        <span>{visualize?"Visualizing...":"Done!"}</span>
         <button className='btn' onClick={()=>onClearGrid(true)} >Clear Grid</button>
-        <span>{visualize?"Visualizing...":"stopped."}</span>
     </div>
 }
 

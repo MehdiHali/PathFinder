@@ -1,9 +1,12 @@
-
+import logo from '../assets/Logo.svg'
 
 
 function Logo({className}: {className: string}) {
   return (
-  <div className={"text-2xl font-bold "+className}>Grapher</div>
+  <div className={"text-2xl font-bold "+className}>
+    <img src={logo} alt="" />
+    {/* Grapher */}
+    </div>
   );
 }
 

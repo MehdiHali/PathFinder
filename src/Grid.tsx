@@ -48,7 +48,7 @@ let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouse
 }
 
 
-function Grid({className,visualize, setVisualize,action, clearGrid, setClearGrid}: {className: string,visualize: boolean, action: action, clearGrid: boolean,setVisualize: Dispatch<SetStateAction<boolean>>,setClearGrid: Dispatch<SetStateAction<boolean>>}){
+function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,action, clearGrid, setClearGrid}: {className: string, triggerResetGrid: boolean, setResetGrid: Dispatch<SetStateAction<boolean>>,visualize: boolean, action: action, clearGrid: boolean,setVisualize: Dispatch<SetStateAction<boolean>>,setClearGrid: Dispatch<SetStateAction<boolean>>}){
 
     const COLS = 30;
     const ROWS = 15;
@@ -106,7 +106,7 @@ function Grid({className,visualize, setVisualize,action, clearGrid, setClearGrid
      */
     useEffect(()=>{
         visualize && !searched && search();
-        !visualize && searched && resetGrid();
+        triggerResetGrid && searched && resetGrid();
         clearGrid && triggerClearGrid();
     });
 
@@ -149,6 +149,7 @@ function Grid({className,visualize, setVisualize,action, clearGrid, setClearGrid
         setPath([]);
         setDFSVisited([]);
         setDFSPath([]);
+        setResetGrid(false);
         setVisualize(false);
         setSearched(false);
     }
@@ -186,7 +187,7 @@ function Grid({className,visualize, setVisualize,action, clearGrid, setClearGrid
 
         }else{
             // Her we beed to declare the end of visualization
-            // setVisualize(false);
+            setVisualize(false);
         }
         
     },[DFSVisited,DFSVisited,path,visited])
