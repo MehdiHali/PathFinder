@@ -44,7 +44,7 @@ function App() {
      <Header  onClearGrid={setClearGrid} setAction={setAction} visualize={visualize} className={"h-[10%] bg-primary"}/>
      <div className='flex h-[90vh] '>
       <Sidebar onVisualize={()=>!visualize&&setVisualize(true)} onReset={()=>visualize&&setVisualize(false)} className={"w-[20%] bg-primary hidden sm:block"} />
-      <Grid clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} visualize={visualize}  className={"w-full bg-gray-100 h-full"}/>
+      <Grid clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} visualize={visualize} setVisualize={setVisualize}  className={"w-full bg-gray-100 h-full"}/>
      </div>
     </div>
   );

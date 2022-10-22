@@ -1,7 +1,12 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
-import {useGraph,getVertex, getNeighbors,Vertex, setToArray} from './Utils/useGraph'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {useGraph,getVertex,Vertex, setToArray} from './Utils/useGraph'
 import { DFS } from './Utils/DFS';
 import { action } from './Utils/types';
+import Mosque from './assets/Mosque.png'
+import Castle from './assets/Castle.png'
+import Location  from './assets/Location.png'
+import HomePin  from './assets/HomePin.png'
+import MyLocation  from './assets/MyLocation.png'
 
 
 let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouseEnter,onMouseDown}: {vertex: Vertex,path: Vertex[], start: Vertex, goal: Vertex,action: action, visited: Vertex[],onClick: ()=>void, onMouseUp:()=>void, onMouseEnter: ()=>void, onMouseDown: ()=>void }): JSX.Element=>{
@@ -13,7 +18,7 @@ let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouse
     },[])
 
     let isPath = path.includes(vertex);
-    let isStart = (vertex.col === start.col && vertex.row === start.row);
+    let isStart: boolean = (vertex.col === start.col && vertex.row === start.row);
     let isGoal =  (vertex.col === goal.col && vertex.row === goal.row);
 
 
@@ -24,22 +29,31 @@ let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouse
         onMouseEnter={onMouseEnter} 
         onMouseUp={()=>{console.log("Mouse is Up");onMouseUp()}} 
         onClick={()=>{console.log("making",vertex,action); onClick()}} 
-        className={"text-xs relative hover:scale-125 hover:border-yellow-400 w-full h-full p-2 border border-blue-400 overflow-hidden "+ (vertex.isWall?" bg-slate-500":isStart?" bg-green-400":isGoal?" bg-red-400":isPath?" bg-yellow-400":isVisited?" bg-blue-400":"") } >
+        className={" select-none grid content-center object-cover text-xs relative hover:scale-125 hover:border-yellow-400  border border-blue-400 overflow-hidden "+ (vertex.isWall?" border-slate-500":isStart?" border-green-400":isGoal?" border-red-400":isPath?" bg-yellow-400":isVisited?" bg-blue-200":"") } >
             {/* <p  className=' select-none  '>
                 {vertex.row.toString()+","+vertex.col.toString()}
             </p>  */}
+            <div className={"w-full h-4 mx-auto grid content-center"}>
+
+                    { 
+                    vertex.isWall ? <img className='w-6  mx-auto object-cover' src={Castle} />
+                    :isStart ? <img className='w-full  mx-auto object-cover' src={MyLocation} />
+                    :isGoal ? <img className='w-full  mx-auto object-cover' src={HomePin} />
+                    : ""
+                    }
+            </div>
         </span>
     </>
 
 }
 
 
-function Grid({className,visualize,action, clearGrid, setClearGrid}: {className: string,visualize: boolean, action: action, clearGrid: boolean,setClearGrid: Dispatch<SetStateAction<boolean>>}){
+function Grid({className,visualize, setVisualize,action, clearGrid, setClearGrid}: {className: string,visualize: boolean, action: action, clearGrid: boolean,setVisualize: Dispatch<SetStateAction<boolean>>,setClearGrid: Dispatch<SetStateAction<boolean>>}){
 
     const COLS = 30;
     const ROWS = 15;
     const SPEED = 1;
-    let {graph, makeWall, makeRoute,resetGrid, graphLoaded} = useGraph(COLS,ROWS);
+    let {graph, makeWall, makeRoute,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
     let [mouseDown,setMouseDown]= useState(false);
     let [searched, setSearched]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     let [stop, setStop]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(true);
@@ -82,6 +96,7 @@ function Grid({className,visualize,action, clearGrid, setClearGrid}: {className:
     function triggerClearGrid(){
         console.log("GRID::: Triggering clear grid");
         
+            resetGraph();
             resetGrid();
             setClearGrid(false);
     }
@@ -91,7 +106,7 @@ function Grid({className,visualize,action, clearGrid, setClearGrid}: {className:
      */
     useEffect(()=>{
         visualize && !searched && search();
-        !visualize && searched && reset();
+        !visualize && searched && resetGrid();
         clearGrid && triggerClearGrid();
     });
 
@@ -124,12 +139,17 @@ function Grid({className,visualize,action, clearGrid, setClearGrid}: {className:
         
     }
 
-    function reset(){
+    /**
+     * this method resets the state of the Grid and not the graph
+     * the funciton responsible for the reset og the graph is @resetGraph
+     */
+    function resetGrid(){
         setStop(true);
         setVisited([]);
         setPath([]);
         setDFSVisited([]);
         setDFSPath([]);
+        setVisualize(false);
         setSearched(false);
     }
 

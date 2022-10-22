@@ -274,7 +274,7 @@ function useGraph(cols?: number,rows?: number){
     return neighbors;
     }
 
-    function resetGrid(){
+    function resetGraph(){
         console.log("USEGRAPH::: Resetting the grid");
         console.log("USEGRAPH::: Current walls", graph.walls);
         if(cols!= undefined && rows != undefined)
@@ -311,7 +311,7 @@ function useGraph(cols?: number,rows?: number){
     },[graph])
 
 
-    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, resetGrid};
+    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, resetGraph};
 }
 
 // ============== Helper Fnuctions =============
