@@ -6,9 +6,9 @@ import Castle from './assets/Castle.png'
 import Location from './assets/Location.png'
 import MyLocation from './assets/MyLocation.png'
 
-    let ToolBoxContext = createContext({} as any);
+let ToolBoxContext = createContext({} as any);
 
- ToolBox.Tool = function Tool<T>({value, onClick, children}:{value: T, selected: boolean, onClick?: (value: T,...params: any[])=>void, children: ReactNode}){
+ToolBox.Tool = function Tool<T>({value, onClick, children}:{value: T, selected: boolean, onClick?: (value: T,...params: any[])=>void, children: ReactNode}){
     // const [value,setValue] : [T, Dispatch<SetStateAction<T>>] = useState("" as T);
 
     let {selected, setSelected} = useContext(ToolBoxContext);
@@ -18,6 +18,7 @@ import MyLocation from './assets/MyLocation.png'
         </li>
 
 }
+
 
 
 function ToolBox<T> ({onChange, defaultValue, children}:{onChange: Dispatch<SetStateAction<T>>, defaultValue: T, children: ReactNode}){

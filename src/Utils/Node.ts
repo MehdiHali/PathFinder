@@ -1,23 +1,24 @@
 
-class Node {
-    private val: number|string = 0;
-    private prev: Node|null = null;
+class Node<T> {
+    private val: T = 0 as T;
+    private prev?: Node<T>|null = null;
 
-    constructor(val: number|string){
+    constructor(val: T){
         this.val = val;
     }
 
-    getVal(): number|string{
+    getVal(): T{
         return this.val
     }
-    setVal(val: number|string): void{
+    setVal(val: T): void{
         this.val = val;
     }
 
-    getPrev(): Node|null{
+    getPrev(): Node<T>|null|undefined{
+        if(this.prev != undefined)
         return this.prev;
     }
-    setPrev(prev: Node): void{
+    setPrev(prev: Node<T>): void{
         this.prev = prev;
     }
 }

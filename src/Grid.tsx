@@ -1,12 +1,14 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {useGraph,getVertex,Vertex, setToArray} from './Utils/useGraph'
 import { DFS } from './Utils/DFS';
+import { BFS } from './Utils/BFS';
 import { action } from './Utils/types';
 import Mosque from './assets/Mosque.png'
 import Castle from './assets/Castle.png'
 import Location  from './assets/Location.png'
 import HomePin  from './assets/HomePin.png'
 import MyLocation  from './assets/MyLocation.png'
+import Heap from './Utils/Heap';
 
 
 let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouseEnter,onMouseDown}: {vertex: Vertex,path: Vertex[], start: Vertex, goal: Vertex,action: action, visited: Vertex[],onClick: ()=>void, onMouseUp:()=>void, onMouseEnter: ()=>void, onMouseDown: ()=>void }): JSX.Element=>{
@@ -63,6 +65,7 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
     let [DFSPath,setDFSPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [start, setStart]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:0,row:0} as Vertex);
     let [goal, setGoal]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:18,row:9} as Vertex);
+    let [heap, setHeap]: [Heap<number>, Dispatch<SetStateAction<Heap<number>>>] = useState(new Heap());
     
     function handleMouseEnter(v: Vertex){
         if(mouseDown) handleCellClick(v);
@@ -101,6 +104,32 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
             setClearGrid(false);
     }
 
+    useEffect(()=>{
+        let newHeap = new Heap(heap);
+        newHeap.insert(1);
+        console.log("GRID::: after inserting",newHeap);
+        newHeap.insert(2);
+        console.log("GRID::: after inserting ",newHeap);
+        newHeap.insert(3);
+        console.log("GRID::: after inserting",newHeap);
+        newHeap.insert(4);
+        console.log("GRID::: after inserting",newHeap);
+
+        setHeap(newHeap);
+    },[])
+    useEffect(()=>{
+        console.log("GRID::: current heap ",heap);
+        if(heap.length > 0){
+            let newHeap = new Heap(heap);
+            console.log("GRID::: heap length before removing", newHeap.length);
+            
+            console.log("GRID::: removed element from the heap is", newHeap.remove());
+            setHeap(newHeap);
+            
+        }
+        
+    },[heap])
+
     /**
      * Start's the Search
      */
@@ -114,7 +143,6 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
         setSearched(true);
         console.log("VIEW::: Searching Triggered");
         
-         let interval: any;
         if(!graphLoaded)
             console.log("!!!!!!!!! GRAPH NOT LOADED YET !!!!!");
         else 

@@ -1,8 +1,8 @@
 import { Graph, Vertex, getNeighbors, getVertex } from "./useGraph";
 
-function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: any)=>void): { DFSPath: Vertex[]; DFSVisited: Vertex[]; } {
+function BFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: any)=>void): { DFSPath: Vertex[]; DFSVisited: Vertex[]; } {
 
-    console.log("DFS::: Start");
+    console.log("BFS::: Start");
     
 
     if(!graph.verticesSet.has(start) || !graph.verticesSet.has(goal))
@@ -14,18 +14,18 @@ function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
     let path: Vertex[] = [];
     let parentMap: Map<Vertex,Vertex> = new Map<Vertex,Vertex>;
     let visited: Vertex[] = [];
-    let stack: Vertex[] = [];
+    let queue: Vertex[] = [];
 
     // initialization
     parentMap.set(start,start);
     let found: boolean = false;
-    // push(stack,)
-    stack.push(start);
+    // push(queue,)
+    queue.push(start);
 
-    while(stack.length > 0 && !found)
+    while(queue.length > 0 && !found)
     {
 
-        let curr: Vertex = stack.pop()??({} as Vertex);
+        let curr: Vertex = queue.shift()??({} as Vertex);
         console.log("current is",curr);
         visited.push(curr);
         
@@ -43,7 +43,7 @@ function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
                 
                 if(!visited.includes(n)){
                     console.log("DFS::: pushing ",n);
-                    stack.push(n);
+                    queue.push(n);
                     parentMap.set(n,curr);
                 }
             })
@@ -61,7 +61,7 @@ function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
             curr = parent;
         }
     }
-    stack.push(start);
+    queue.push(start);
 
     console.log("DFS::: the path is ", path);
     
@@ -69,7 +69,7 @@ function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
     return {DFSPath:path, DFSVisited: visited};
 }
 
-export {DFS};
+export {BFS};
 
 // TODO : revise node modules and search POO and write keynotes to remember wehen writing article
 // attend courses and work on project when course end
