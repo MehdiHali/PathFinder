@@ -10,6 +10,7 @@ interface Vertex {
     isWall: boolean
     isVisited: boolean
     isPath: boolean
+    weight: number
 }
 
 interface Graph {
@@ -18,6 +19,7 @@ interface Graph {
     AdjList: Map<Vertex,Array<Vertex>> ;
     verticesSet: Set<Vertex>;
     walls: Vertex[];
+    updateSwitcher: boolean;
 }
 
 /**
@@ -48,6 +50,7 @@ function useGraph(cols?: number,rows?: number){
         walls: [] as Vertex[],
         visited: [] as Vertex[],
         path: [] as Vertex[],
+        updateSwitcher: false
         } as Graph
     );
 
@@ -106,12 +109,13 @@ function useGraph(cols?: number,rows?: number){
               numVertices: numVertices,
               verticesSet: verticesSet,
               walls: walls,
+              updateSwitcher: false
             }
         // fill the vertices set
         for(let row = 0; row<rows; row++)
             for(let col = 0; col<cols; col++)
             {
-                let currVertex: Vertex = {row,col,isWall: false, isVisited: false, isPath: false};
+                let currVertex: Vertex = {row,col,isWall: false, isVisited: false, isPath: false, weight: 0};
                 newAdjList.set(currVertex , []);
                 // addVertex(currVertex)
                 verticesSet.add(currVertex);
@@ -178,6 +182,11 @@ function useGraph(cols?: number,rows?: number){
 
     }
 
+
+    function setWeight(vertex: Vertex, weight: number){
+        getVertex(graph,vertex).weight = weight;
+        setGraph({...graph, updateSwitcher: !graph.updateSwitcher});
+    }
 
     function makeWall(v: Vertex){
             if(v.isWall) return;
@@ -334,7 +343,7 @@ function useGraph(cols?: number,rows?: number){
     },[graph])
 
 
-    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, makeVisited, makePath, resetGraph};
+    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, makeVisited, setWeight, makePath, resetGraph};
 }
 
 // ============== Helper Fnuctions =============

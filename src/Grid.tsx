@@ -3,52 +3,7 @@ import {useGraph,getVertex,Vertex, setToArray} from './Utils/useGraph'
 import { DFS } from './Utils/DFS';
 import { BFS } from './Utils/BFS';
 import { action, algo } from './Utils/types';
-import Mosque from './assets/Mosque.png'
-import Castle from './assets/Castle.png'
-import Location  from './assets/Location.png'
-import HomePin  from './assets/HomePin.png'
-import Home from './assets/home.png'
-import MyLocation  from './assets/MyLocation.png'
-import MinHeap from './Utils/Heap';
-import Queue from './Utils/Queue';
-
-
-let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouseEnter,onMouseDown}: {vertex: Vertex,path: Vertex[], start: Vertex, goal: Vertex,action: action, visited: Vertex[],onClick: ()=>void, onMouseUp:()=>void, onMouseEnter: ()=>void, onMouseDown: ()=>void }): JSX.Element=>{
-
-    let isVisited = visited.includes(vertex);
-    useEffect(()=>{
-        // console.log("isVisited", isVisited);
-        
-    },[])
-
-    let isPath = path.includes(vertex);
-    
-    let isStart: boolean = (vertex.col === start.col && vertex.row === start.row);
-    let isGoal =  (vertex.col === goal.col && vertex.row === goal.row);
-
-    return <>
-        <span 
-        onMouseDown={onMouseDown}
-        onMouseEnter={onMouseEnter} 
-        onMouseUp={()=>{console.log("Mouse is Up");onMouseUp()}} 
-        onClick={()=>{console.log("making",vertex,action); onClick()}} 
-        className={" select-none grid content-center object-cover text-xs relative hover:scale-125 hover:border-yellow-400  border border-blue-400 overflow-hidden "+ (vertex.isWall?" border-slate-500":isStart?" border-green-400":isGoal?" border-red-400":isPath?" bg-yellow-400":isVisited?" bg-blue-200":"") } >
-            {/* <p  className=' select-none  '>
-                {vertex.row.toString()+","+vertex.col.toString()}
-            </p>  */}
-            <div className={"w-full h-4 mx-auto grid content-center"}>
-
-                    { 
-                    vertex.isWall ? <img className='w-6  mx-auto object-cover' src={Home} />
-                    :isStart ? <img className='  mx-auto object-cover' src={MyLocation} />
-                    :isGoal ? <img className='  mx-auto object-cover' src={HomePin} />
-                    : ""
-                    }
-            </div>
-        </span>
-    </>
-
-}
+import Cell from './Cell';
 
 
 function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisualize,action, clearGrid, setClearGrid}: {className: string, algo: algo, triggerResetGrid: boolean, setResetGrid: Dispatch<SetStateAction<boolean>>,visualize: boolean, action: action, clearGrid: boolean,setVisualize: Dispatch<SetStateAction<boolean>>,setClearGrid: Dispatch<SetStateAction<boolean>>}){
@@ -56,67 +11,24 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
     const COLS = 30;
     const ROWS = 15;
     const SPEED = 1;
-    let {graph, makeWall, makeRoute, makeVisited, makePath,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
+    let {graph, makeWall, makeRoute, makeVisited, setWeight, makePath,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
     let [mouseDown,setMouseDown]= useState(false);
     let [searched, setSearched]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
-    let [stop, setStop]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(true);
     let [path,setPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [visited, setVisited]: [Vertex[], Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[])
     let [DFSVisited,setDFSVisited]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [DFSPath,setDFSPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [start, setStart]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:5,row:4} as Vertex);
     let [goal, setGoal]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:15,row:6} as Vertex);
-    // let [heap, setHeap]: [MinHeap<number>, Dispatch<SetStateAction<MinHeap<number>>>] = useState(new MinHeap());
-    // let [queue, setQueue]: [Queue<number>, Dispatch<SetStateAction<Queue<number>>>] = useState(new Queue());
     
     function handleMouseEnter(v: Vertex){
         if(mouseDown) handleCellClick(v);
     }
 
-
-    // useEffect(()=>{
-    //     let newQueue = new Queue<number>();
-    //     newQueue.push(1);
-    //     newQueue.push(2);
-    //     newQueue.push(3);
-    //     setQueue(newQueue);
-    // },[])
-
-    // useEffect(()=>{
-    //     console.log("GRID::: the new Queue", queue);
+    useEffect(()=>{
+        console.log("GRID::: Graph updated", graph);
         
-    //     if(queue.length > 0){
-    //         let newQueue = new Queue<number>(queue);
-    //         console.log("GRID::: Polling from queue", newQueue.poll());
-    //         console.log("GRID::: new length of queue", newQueue.length);
-            
-    //         setQueue(newQueue);
-    //     }
-    // },[queue])
-
-    // useEffect(()=>{
-    //         let interval: any;
-    //     if(graphLoaded && !searchDone)
-    //     {
-
-    //     console.log("VIEW::: INITIAL VISITED",visited);
-            
-    //     let {DFSPath,DFSVisited} = DFS(
-    //         graph,
-    //         getVertex(graph,start),
-    //         getVertex(graph,goal),
-    //         );
-    //         console.log("VIEW::: setting THE new path", path);
-            
-        
-    //         setSearchdone(true);
-
-    //         setDFSVisited(DFSVisited);
-
-    //     }
-
-        
-    // },[graph])
+    },[graph])
 
 
     function triggerClearGrid(){
@@ -127,35 +39,7 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
             setClearGrid(false);
     }
 
-    // useEffect(()=>{
-    //     let newHeap = new MinHeap(heap);
-    //     newHeap.insert(1);
-    //     console.log("GRID::: after inserting",newHeap);
-    //     newHeap.insert(2);
-    //     console.log("GRID::: after inserting ",newHeap);
-    //     newHeap.insert(3);
-    //     console.log("GRID::: after inserting",newHeap);
-    //     newHeap.insert(4);
-    //     console.log("GRID::: after inserting",newHeap);
-
-    //     setHeap(newHeap);
-    // },[])
-
-
-    // useEffect(()=>{
-    //     console.log("GRID::: current heap ",heap);
-    //     if(heap.length > 0){
-    //         let newHeap = new MinHeap(heap);
-    //         console.log("GRID::: heap length before removing", newHeap.length);
-            
-    //         console.log("GRID::: removed element from the heap is", newHeap.removePeek());
-    //         setHeap(newHeap);
-            
-    //     }
-        
-    // },[heap])
-
-    /**
+     /**
      * Start's the Search
      */
     useEffect(()=>{
@@ -210,7 +94,6 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
      * the funciton responsible for the reset og the graph is @resetGraph
      */
     function resetGrid(){
-        setStop(true);
         setVisited([]);
         setPath([]);
         setDFSVisited([]);
@@ -297,6 +180,7 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
                 path={path} 
                 visited={visited} 
                 vertex={v} 
+                setWeight={setWeight}
                 onMouseDown={()=>{setMouseDown(true)}} 
                 onClick={()=>{handleCellClick(v)}} 
                 onMouseUp={()=>{setMouseDown(false)}} 

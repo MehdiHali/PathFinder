@@ -1,8 +1,6 @@
 import { Children, createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
 import Logo from './Components/Logo';
 import { action } from './Utils/types';
-import Mosque from './assets/Mosque.png'
-import Castle from './assets/Castle.png'
 import Eraser from './assets/eraser.png'
 import Home from './assets/home.png'
 import Location from './assets/Location.png'
@@ -51,6 +49,9 @@ const Header = ({className, visualize, setAction, onClearGrid}: {className: stri
         <Logo className={" w-32  object-contain"}/>
 
         <ToolBox<action> onChange={setAction} defaultValue={"WALL"}>
+            <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"SELECT"}>
+                <img src={Home} />
+            </ToolBox.Tool>
             <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
                 <img src={Home} />
             </ToolBox.Tool>
