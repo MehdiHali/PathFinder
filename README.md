@@ -1,5 +1,6 @@
-PathFinder: A path finding algorithms visualiser built with react using typescript.
+PathFinder: 
 ==
+A path finding algorithms visualiser built with react using typescript.
 ---
 [![Netlify Status](https://api.netlify.com/api/v1/badges/741ba52b-d65e-4aae-92f4-dfcf04fba4a6/deploy-status)](https://app.netlify.com/sites/pathfinding-visual/deploys)
 
