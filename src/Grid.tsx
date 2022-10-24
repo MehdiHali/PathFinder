@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {useGraph,getVertex,Vertex, setToArray} from './Utils/useGraph'
 import { DFS } from './Utils/DFS';
 import { BFS } from './Utils/BFS';
-import { action } from './Utils/types';
+import { action, algo } from './Utils/types';
 import Mosque from './assets/Mosque.png'
 import Castle from './assets/Castle.png'
 import Location  from './assets/Location.png'
@@ -51,7 +51,7 @@ let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouse
 }
 
 
-function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,action, clearGrid, setClearGrid}: {className: string, triggerResetGrid: boolean, setResetGrid: Dispatch<SetStateAction<boolean>>,visualize: boolean, action: action, clearGrid: boolean,setVisualize: Dispatch<SetStateAction<boolean>>,setClearGrid: Dispatch<SetStateAction<boolean>>}){
+function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisualize,action, clearGrid, setClearGrid}: {className: string, algo: algo, triggerResetGrid: boolean, setResetGrid: Dispatch<SetStateAction<boolean>>,visualize: boolean, action: action, clearGrid: boolean,setVisualize: Dispatch<SetStateAction<boolean>>,setClearGrid: Dispatch<SetStateAction<boolean>>}){
 
     const COLS = 30;
     const ROWS = 15;
@@ -164,6 +164,12 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
     });
 
     function search(){
+        let algoImpl;
+        switch(algo){
+            case 'DFS': algoImpl = DFS;break;
+            case 'BFS': algoImpl = BFS;break;
+            default: algoImpl = DFS;break;
+        }
         setSearched(true);
         // console.log("VIEW::: Searching Triggered");
         
@@ -175,7 +181,7 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
         {
         // console.log("VIEW::: INITIAL VISITED",visited);
             
-        let {DFSPath,DFSVisited} = BFS(
+        let {DFSPath,DFSVisited} = algoImpl(
             graph,
             getVertex(graph,start),
             getVertex(graph,goal),
@@ -228,7 +234,7 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
         console.log("VIEW::: The new DFSPath", DFSPath);
         
         if((DFSVisited.length > 0 )){
-            let curr = DFSVisited.pop();
+            let curr = DFSVisited.shift();
             // console.info("current to be colored", curr);
             
                 const interval = setTimeout(
@@ -242,7 +248,7 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
                 },SPEED);
                 return () => clearTimeout(interval);
         }else if(DFSPath.length > 0){
-            let curr = DFSPath.pop();
+            let curr = DFSPath.shift();
             // console.info("current in PATH to be colored", curr);
             
                 const interval = setTimeout(

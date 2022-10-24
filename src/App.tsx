@@ -3,7 +3,7 @@ import Header from './Header';
 import Grid from './Grid';
 import Sidebar from './Sidebar';
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
-import { action } from './Utils/types';
+import { action, algo } from './Utils/types';
 import { clear } from 'console';
 // import {useStack} from './Utils/useStack'
 // import {useGraph} from './Utils/useGraph'
@@ -14,6 +14,7 @@ function App() {
     const [resetGrid, setResetGrid]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     const [clearGrid, setClearGrid]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     let [action,setAction]: [action: action,setAction: Dispatch<SetStateAction<action>>] = useState("WALL" as action);
+    let [algo,setAlgo]: [action: algo,setAction: Dispatch<SetStateAction<algo>>] = useState("DFS" as algo);
 
     useEffect(()=>{
 
@@ -44,8 +45,8 @@ function App() {
     <div className="App h-screen min-h-screen">
      <Header  onClearGrid={setClearGrid} setAction={setAction} visualize={visualize} className={"h-[10%] bg-primary"}/>
      <div className='flex h-[90vh] '>
-      <Sidebar onVisualize={()=>!visualize&&setVisualize(true)} onReset={()=>setResetGrid(true)} className={"w-[20%] bg-primary hidden sm:block"} />
-      <Grid triggerResetGrid={resetGrid} setResetGrid={setResetGrid} clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} visualize={visualize} setVisualize={setVisualize}  className={"w-full bg-gray-100 h-full"}/>
+      <Sidebar setAlgo={setAlgo} onVisualize={()=>!visualize&&setVisualize(true)} onReset={()=>setResetGrid(true)} className={"w-[20%] bg-primary hidden sm:block"} />
+      <Grid algo={algo} triggerResetGrid={resetGrid} setResetGrid={setResetGrid} clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} visualize={visualize} setVisualize={setVisualize}  className={"w-full bg-gray-100 h-full"}/>
      </div>
     </div>
   );

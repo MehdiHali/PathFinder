@@ -1,7 +1,8 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
+import { algo } from "./Utils/types";
 
 
-const Sidebar = ({className, onVisualize, onReset}:{className: string,onVisualize: ()=>void, onReset: ()=>void})=>{
+const Sidebar = ({className, onVisualize, onReset, setAlgo}:{className: string,onVisualize: ()=>void, onReset: ()=>void, setAlgo: Dispatch<SetStateAction<algo>>})=>{
 
     function handleVisualize(ev: any){
         ev.preventDefault();
@@ -16,15 +17,25 @@ const Sidebar = ({className, onVisualize, onReset}:{className: string,onVisualiz
         console.log("SIDEBAR::: Stopping visualization");
     }
 
+    function handleChange(ev: any){
+        ev.preventDefault();
+        setAlgo(ev.target.value);
+    }
+
     return <div className={" "+className}>
-        <form style={{gap: "4px"}} className="flex flex-col items-start list-none p-8">
-            <li className=""><input name="algo" type={"radio"} className={"mr-2"}/><label>DFS</label> </li>
-            <li className=""><input name="algo" type={"radio"} className={"mr-2"}/><label>BFS</label> </li>
-            <li className=""><input name="algo" type={"radio"} className={"mr-2"}/><label>Dijkstra</label> </li>
-            <li className=""><input name="algo" type={"radio"} className={"mr-2"}/><label>A*</label> </li>
-            <button className="btn" onClick={handleVisualize} >Visualize</button>
-            <button className="btn" onClick={handleReset} >Reset</button>
-        </form>
+        <div style={{gap: "4px"}} className="flex flex-col items-start list-none p-8" onChange={handleChange}>
+            shoose algorithm:
+            <select name="" id="" onChange={handleChange} className={"p-2 outline-none border-2 border-yellow-400 hover:border-dashed"}>
+                <option value="DFS">DFS</option>
+                <option value="BFS">BFS</option>
+                <option value="Dijkstra">Dijkstra</option>
+                <option value="AStar">AStar</option>
+            </select>
+            <div className="flex space-x-2">
+                <button className="btn" onClick={handleVisualize} >Visualize</button>
+                <button className="btn" onClick={handleReset} >Reset</button>
+            </div>
+        </div>
     </div>
 }
 

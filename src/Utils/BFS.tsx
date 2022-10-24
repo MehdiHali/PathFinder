@@ -70,7 +70,7 @@ function BFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
     
     
     // TODO reverse the array while filling them and not here
-    return {DFSPath:path.reverse(), DFSVisited: visited.reverse()};
+    return {DFSPath:path, DFSVisited: visited};
 }
 
 export {BFS};
