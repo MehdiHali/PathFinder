@@ -1,9 +1,9 @@
-import logo from '../assets/Logo.svg'
+import logo from '../assets/PathFinderLogo.svg'
 
 
 function Logo({className}: {className: string}) {
   return (
-  <div className={"text-2xl font-bold "+className}>
+  <div className={" "+className}>
     <img src={logo} alt="" />
     {/* Grapher */}
     </div>

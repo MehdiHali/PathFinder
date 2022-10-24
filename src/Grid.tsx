@@ -22,10 +22,9 @@ let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouse
     },[])
 
     let isPath = path.includes(vertex);
+    
     let isStart: boolean = (vertex.col === start.col && vertex.row === start.row);
     let isGoal =  (vertex.col === goal.col && vertex.row === goal.row);
-
-
 
     return <>
         <span 
@@ -65,14 +64,15 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
     let [visited, setVisited]: [Vertex[], Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[])
     let [DFSVisited,setDFSVisited]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [DFSPath,setDFSPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
-    let [start, setStart]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:0,row:0} as Vertex);
-    let [goal, setGoal]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:18,row:9} as Vertex);
+    let [start, setStart]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:5,row:4} as Vertex);
+    let [goal, setGoal]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:15,row:6} as Vertex);
     // let [heap, setHeap]: [MinHeap<number>, Dispatch<SetStateAction<MinHeap<number>>>] = useState(new MinHeap());
     // let [queue, setQueue]: [Queue<number>, Dispatch<SetStateAction<Queue<number>>>] = useState(new Queue());
     
     function handleMouseEnter(v: Vertex){
         if(mouseDown) handleCellClick(v);
     }
+
 
     // useEffect(()=>{
     //     let newQueue = new Queue<number>();
@@ -172,7 +172,7 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
             default: algoImpl = DFS;break;
         }
         setSearched(true);
-        // console.log("VIEW::: Searching Triggered");
+        // console.log("VIEW::: Searching Triggered"6;
         
         if(!graphLoaded)
             {
@@ -269,12 +269,19 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
         
     },[DFSVisited,DFSPath,visited,path])
 
+    function isStart(vertex: Vertex):boolean{
+        return (start.col === vertex.col && start.row === vertex.row);
+    }
+    function isGoal(vertex: Vertex):boolean{
+        return (goal.col === vertex.col && goal.row === vertex.row);
+    }
+
     function handleCellClick(vertex: Vertex){
         switch(action){
-            case 'WALL': makeWall(vertex);break;
-            case 'ROUTE': makeRoute(vertex);break;
-            case 'START': setStart(vertex);break;
-            case 'GOAL': setGoal(vertex);break;
+            case 'WALL': ( !isStart(vertex) && !isGoal(vertex) ) && makeWall(vertex);break;
+            case 'ROUTE': (vertex !== goal && vertex !== start ) && makeRoute(vertex);break;
+            case 'START': (vertex !== start)&& setStart(vertex);break;
+            case 'GOAL': (vertex !== goal) && setGoal(vertex);break;
         }
     }
 

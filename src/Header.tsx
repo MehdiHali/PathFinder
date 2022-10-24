@@ -3,6 +3,7 @@ import Logo from './Components/Logo';
 import { action } from './Utils/types';
 import Mosque from './assets/Mosque.png'
 import Castle from './assets/Castle.png'
+import Eraser from './assets/Eraser.svg'
 import Home from './assets/Home.svg'
 import Location from './assets/Location.png'
 import MyLocation from './assets/MyLocation.png'
@@ -14,7 +15,7 @@ ToolBox.Tool = function Tool<T>({value, onClick, children}:{value: T, selected: 
 
     let {selected, setSelected} = useContext(ToolBoxContext);
 
-    return <li onClick={()=>{setSelected(value);onClick && onClick(value)}} className={"flex space-x-4 h-8 p-1 rounded-md cursor-pointer hover:border-2 border-yellow-400 hover:bg-orange-400 hover:border-dashed "+((selected === value)&&" bg-orange-400")}>
+    return <li onClick={()=>{setSelected(value);onClick && onClick(value)}} className={"flex space-x-4 h-8 p-1 rounded-md cursor-pointer hover:border-2 border-yellow-400 hover:bg-slate-400 hover:border-dashed "+((selected === value)&&" bg-slate-400")}>
             {children}
         </li>
 
@@ -47,11 +48,14 @@ const Header = ({className, visualize, setAction, onClearGrid}: {className: stri
 
 
     return <div className={'bg-gray-300 p-4 flex justify-between items-center '+className}>
-        <Logo className={" w-28  object-contain"}/>
+        <Logo className={" w-32  object-contain"}/>
 
         <ToolBox<action> onChange={setAction} defaultValue={"WALL"}>
             <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
                 <img src={Home} />
+            </ToolBox.Tool>
+            <ToolBox.Tool selected={false} value={"ROUTE"}>
+                <img src={Eraser} />
             </ToolBox.Tool>
             <ToolBox.Tool selected={false} value={"START"}>
                 <img src={MyLocation} />
