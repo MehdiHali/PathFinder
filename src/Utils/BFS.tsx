@@ -54,17 +54,20 @@ function BFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
     }
 
     // console.log("DFS::: PARENT MAP", parentMap);
-    console.log("DFS::: Constructing path");
-    let curr = goal;
-    path.push(curr);
-    while(curr != start && curr != undefined){
-        let parent = parentMap.get(curr);
-        if(parent != undefined){
-            path.push(parent)
-            curr = parent;
+    if(found){
+
+        console.log("DFS::: Constructing path");
+        let curr = goal;
+        path.push(curr);
+        while(curr != start && curr != undefined){
+            let parent = parentMap.get(curr);
+            if(parent){
+                path.push(parent)
+                curr = parent;
+            }
         }
+        path.push(start);
     }
-    queue.push(start);
 
     // console.log("DFS::: the path is ", path);
     

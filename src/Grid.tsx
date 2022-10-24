@@ -279,7 +279,7 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
     function handleCellClick(vertex: Vertex){
         switch(action){
             case 'WALL': ( !isStart(vertex) && !isGoal(vertex) ) && makeWall(vertex);break;
-            case 'ROUTE': (vertex !== goal && vertex !== start ) && makeRoute(vertex);break;
+            case 'ROUTE':  ( !isStart(vertex) && !isGoal(vertex) ) && makeRoute(vertex);break;
             case 'START': (vertex !== start)&& setStart(vertex);break;
             case 'GOAL': (vertex !== goal) && setGoal(vertex);break;
         }

@@ -51,6 +51,8 @@ function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
     }
 
     console.log("DFS::: PARENT MAP", parentMap);
+    if(found){
+
     console.log("DFS::: Constructing path");
     let curr = goal;
     path.push(curr);
@@ -62,6 +64,7 @@ function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
         }
     }
     stack.push(start);
+    }
 
     console.log("DFS::: the path is ", path);
     

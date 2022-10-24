@@ -273,17 +273,25 @@ function useGraph(cols?: number,rows?: number){
 
         let neighbors: Vertex[] = [];
         if(cols != undefined && rows != undefined){
+            let n;
             if(v.row >0 ){
-                neighbors.push(getVertex(graph,{row: v.row-1, col: v.col} as Vertex));
+                n = getVertex(graph,{row: v.row-1, col: v.col} as Vertex);
+                if(!n.isWall) neighbors.push(n);
             }
             if(v.col > 0){
-                neighbors.push(getVertex(graph,{row: v.row, col: v.col-1} as Vertex));
+                n = getVertex(graph,{row: v.row, col: v.col-1} as Vertex);
+                if(!n.isWall)
+                neighbors.push(n);
             }
             if(v.row < rows-1){
-                neighbors.push(getVertex(graph,{row: v.row+1, col: v.col} as Vertex));
+                n = getVertex(graph,{row: v.row+1, col: v.col} as Vertex);
+                if(!n.isWall)
+                neighbors.push(n);
             }
             if(v.col < cols-1){
-                neighbors.push(getVertex(graph,{row: v.row, col: v.col+1} as Vertex));
+                n = getVertex(graph,{row: v.row, col: v.col+1} as Vertex);
+                if(!n.isWall)
+                neighbors.push(n);
             }
     }
     return neighbors;
