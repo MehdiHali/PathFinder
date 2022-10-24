@@ -1,16 +1,16 @@
 import Node from "./Node";
 
-class Heap<T> {
+class MinHeap<T> {
     public length = 0;
     private nodes: Node<T>[] = [];
 
-    constructor(opt_heap?: Heap<T>){
+    constructor(opt_heap?: MinHeap<T>){
         if(opt_heap){
             this.hardCopy(opt_heap);
         }
     }
 
-    hardCopy(heap: Heap<T>): void {
+    hardCopy(heap: MinHeap<T>): void {
         heap.nodes.forEach(node=>{
             this.nodes.push(new Node(node.getVal()));
             this.length = heap.length;
@@ -27,7 +27,18 @@ class Heap<T> {
         this.length++;
     }
 
-    remove(): Node<T>|null{
+    insertNode(newNode: Node<T>){
+        console.log("HEAP::: inserting node ",newNode);
+        
+        this.nodes[this.length] = newNode;
+        let nodeIndex = this.length;
+        this.heapifyUp(nodeIndex);
+        this.length++;
+    }
+
+
+
+    removePeek(): T|null{
         console.log("HEAP::: removing node", this.nodes[0]);
         if(this.length === 0){
             console.log("HEAP::: HEAP IS EMPTY !!!!");
@@ -41,7 +52,19 @@ class Heap<T> {
 
         this.heapifyDown(0);
 
-        return removedNode;
+        return removedNode.getVal();
+    }
+
+    peek(): T|null{
+        if(this.length > 0) return this.nodes[0].getVal();
+        else return null;
+    }
+
+    removeMax(): T|null{
+        let maxNode = this.nodes[this.length];
+        this.nodes = this.nodes.filter(n=>n!=this.nodes[this.length -1 ]);
+        this.length--;
+        return maxNode.getVal();
     }
 
     private heapifyUp(index: number): void{
@@ -129,4 +152,4 @@ class Heap<T> {
 }
 
 
-export default Heap;
+export default MinHeap;

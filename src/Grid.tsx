@@ -8,14 +8,15 @@ import Castle from './assets/Castle.png'
 import Location  from './assets/Location.png'
 import HomePin  from './assets/HomePin.png'
 import MyLocation  from './assets/MyLocation.png'
-import Heap from './Utils/Heap';
+import MinHeap from './Utils/Heap';
+import Queue from './Utils/Queue';
 
 
 let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouseEnter,onMouseDown}: {vertex: Vertex,path: Vertex[], start: Vertex, goal: Vertex,action: action, visited: Vertex[],onClick: ()=>void, onMouseUp:()=>void, onMouseEnter: ()=>void, onMouseDown: ()=>void }): JSX.Element=>{
 
     let isVisited = visited.includes(vertex);
     useEffect(()=>{
-        console.log("isVisited", isVisited);
+        // console.log("isVisited", isVisited);
         
     },[])
 
@@ -55,7 +56,7 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
     const COLS = 30;
     const ROWS = 15;
     const SPEED = 1;
-    let {graph, makeWall, makeRoute,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
+    let {graph, makeWall, makeRoute, makeVisited, makePath,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
     let [mouseDown,setMouseDown]= useState(false);
     let [searched, setSearched]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     let [stop, setStop]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(true);
@@ -65,11 +66,32 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
     let [DFSPath,setDFSPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [start, setStart]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:0,row:0} as Vertex);
     let [goal, setGoal]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:18,row:9} as Vertex);
-    let [heap, setHeap]: [Heap<number>, Dispatch<SetStateAction<Heap<number>>>] = useState(new Heap());
+    // let [heap, setHeap]: [MinHeap<number>, Dispatch<SetStateAction<MinHeap<number>>>] = useState(new MinHeap());
+    // let [queue, setQueue]: [Queue<number>, Dispatch<SetStateAction<Queue<number>>>] = useState(new Queue());
     
     function handleMouseEnter(v: Vertex){
         if(mouseDown) handleCellClick(v);
     }
+
+    // useEffect(()=>{
+    //     let newQueue = new Queue<number>();
+    //     newQueue.push(1);
+    //     newQueue.push(2);
+    //     newQueue.push(3);
+    //     setQueue(newQueue);
+    // },[])
+
+    // useEffect(()=>{
+    //     console.log("GRID::: the new Queue", queue);
+        
+    //     if(queue.length > 0){
+    //         let newQueue = new Queue<number>(queue);
+    //         console.log("GRID::: Polling from queue", newQueue.poll());
+    //         console.log("GRID::: new length of queue", newQueue.length);
+            
+    //         setQueue(newQueue);
+    //     }
+    // },[queue])
 
     // useEffect(()=>{
     //         let interval: any;
@@ -104,31 +126,33 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
             setClearGrid(false);
     }
 
-    useEffect(()=>{
-        let newHeap = new Heap(heap);
-        newHeap.insert(1);
-        console.log("GRID::: after inserting",newHeap);
-        newHeap.insert(2);
-        console.log("GRID::: after inserting ",newHeap);
-        newHeap.insert(3);
-        console.log("GRID::: after inserting",newHeap);
-        newHeap.insert(4);
-        console.log("GRID::: after inserting",newHeap);
+    // useEffect(()=>{
+    //     let newHeap = new MinHeap(heap);
+    //     newHeap.insert(1);
+    //     console.log("GRID::: after inserting",newHeap);
+    //     newHeap.insert(2);
+    //     console.log("GRID::: after inserting ",newHeap);
+    //     newHeap.insert(3);
+    //     console.log("GRID::: after inserting",newHeap);
+    //     newHeap.insert(4);
+    //     console.log("GRID::: after inserting",newHeap);
 
-        setHeap(newHeap);
-    },[])
-    useEffect(()=>{
-        console.log("GRID::: current heap ",heap);
-        if(heap.length > 0){
-            let newHeap = new Heap(heap);
-            console.log("GRID::: heap length before removing", newHeap.length);
+    //     setHeap(newHeap);
+    // },[])
+
+
+    // useEffect(()=>{
+    //     console.log("GRID::: current heap ",heap);
+    //     if(heap.length > 0){
+    //         let newHeap = new MinHeap(heap);
+    //         console.log("GRID::: heap length before removing", newHeap.length);
             
-            console.log("GRID::: removed element from the heap is", newHeap.remove());
-            setHeap(newHeap);
+    //         console.log("GRID::: removed element from the heap is", newHeap.removePeek());
+    //         setHeap(newHeap);
             
-        }
+    //     }
         
-    },[heap])
+    // },[heap])
 
     /**
      * Start's the Search
@@ -141,24 +165,31 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
 
     function search(){
         setSearched(true);
-        console.log("VIEW::: Searching Triggered");
+        // console.log("VIEW::: Searching Triggered");
         
         if(!graphLoaded)
-            console.log("!!!!!!!!! GRAPH NOT LOADED YET !!!!!");
+            {
+                // console.log("!!!!!!!!! GRAPH NOT LOADED YET !!!!!");
+            }
         else 
         {
-        console.log("VIEW::: INITIAL VISITED",visited);
+        // console.log("VIEW::: INITIAL VISITED",visited);
             
-        let {DFSPath,DFSVisited} = DFS(
+        let {DFSPath,DFSVisited} = BFS(
             graph,
             getVertex(graph,start),
             getVertex(graph,goal),
             );
-            console.log("VIEW::: setting THE new path", path);
+            // console.log("VIEW::: setting THE new path", path);
             
         
             // setSearchdone(true);
 
+            console.log("SEARCH DONE");
+            console.log("DFS VISITED", DFSVisited);
+            console.log("DFS PATH", DFSPath);
+            
+            
             setDFSVisited(DFSVisited);
             setDFSPath(DFSPath);
 
@@ -182,32 +213,43 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
         setSearched(false);
     }
 
+    useEffect(()=>{
+        console.log("GRID::: The new visited", visited);
+        console.log("GRID::: The new path", path);
+        
+    },[visited,path])
+
     /**
      * This hook is responsible for the incremental coloring
      * of the path
      */
     useEffect(()=>{
-        console.log("VIEW::: The new visited", visited);
-        console.log("VIEW::: The new path", path);
+        console.log("VIEW::: The new DFSVisited", DFSVisited);
+        console.log("VIEW::: The new DFSPath", DFSPath);
         
         if((DFSVisited.length > 0 )){
-            let curr = DFSVisited.shift();
-            console.info("current to be colored", curr);
+            let curr = DFSVisited.pop();
+            // console.info("current to be colored", curr);
             
                 const interval = setTimeout(
                 ()=>{
-                    console.log("VIEW::: from settimeout: Setting visited", curr);
+                    // console.log("VIEW::: from settimeout: Setting visited", curr);
                     if(curr!=undefined)
-                    setVisited(visited=>[...visited,curr??{} as Vertex]);
+                    {
+                        // makeVisited(curr);
+                        setVisited(visited=>[...visited,curr??{} as Vertex]);
+                    }
                 },SPEED);
                 return () => clearTimeout(interval);
         }else if(DFSPath.length > 0){
-            let curr = DFSPath.shift();
-            console.info("current in PATH to be colored", curr);
+            let curr = DFSPath.pop();
+            // console.info("current in PATH to be colored", curr);
             
                 const interval = setTimeout(
                 ()=>{
-                    console.log("VIEW::: from settimeout: Setting path", curr);
+                    if(curr)
+                    makePath(curr)
+                    // console.log("VIEW::: from settimeout: Setting path", curr);
                     if(curr!=undefined)
                     setPath(path=>[...path,curr??{} as Vertex]);
                 },SPEED);
@@ -218,7 +260,7 @@ function Grid({className,triggerResetGrid, setResetGrid,visualize, setVisualize,
             setVisualize(false);
         }
         
-    },[DFSVisited,DFSVisited,path,visited])
+    },[DFSVisited,DFSPath,visited,path])
 
     function handleCellClick(vertex: Vertex){
         switch(action){

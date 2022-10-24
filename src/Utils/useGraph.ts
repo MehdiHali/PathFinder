@@ -8,6 +8,8 @@ interface Vertex {
     col: number,
     row: number,
     isWall: boolean
+    isVisited: boolean
+    isPath: boolean
 }
 
 interface Graph {
@@ -43,7 +45,9 @@ function useGraph(cols?: number,rows?: number){
         numEdges: 0,
         AdjList: new Map<Vertex,Array<Vertex>>,
         verticesSet: new Set<Vertex>(),
-        walls: [] as Vertex[]
+        walls: [] as Vertex[],
+        visited: [] as Vertex[],
+        path: [] as Vertex[],
         } as Graph
     );
 
@@ -70,7 +74,7 @@ function useGraph(cols?: number,rows?: number){
     // }
 
     function printGraph(){
-        graph.AdjList.forEach((v,i)=>console.log(i,"-->",v));
+        // graph.AdjList.forEach((v,i)=>console.log(i,"-->",v));
     }
 
     /** 
@@ -107,7 +111,7 @@ function useGraph(cols?: number,rows?: number){
         for(let row = 0; row<rows; row++)
             for(let col = 0; col<cols; col++)
             {
-                let currVertex: Vertex = {row,col,isWall: false};
+                let currVertex: Vertex = {row,col,isWall: false, isVisited: false, isPath: false};
                 newAdjList.set(currVertex , []);
                 // addVertex(currVertex)
                 verticesSet.add(currVertex);
@@ -149,25 +153,25 @@ function useGraph(cols?: number,rows?: number){
     // remove the edge from the list without triggering rerender
     function removeEdge(adjList: Map<Vertex,Vertex[]>,from: Vertex, to: Vertex){
         from = getVertex(graph,from);
-        console.log("removing edge from",from,"to",to);
+        // console.log("removing edge from",from,"to",to);
         
-        console.log("from nei",getNeighbors(graph,from),'to nei',adjList.get(to));
+        // console.log("from nei",getNeighbors(graph,from),'to nei',adjList.get(to));
         
         
         if(adjList.has(from)) {
-            console.log("from and to keys exist");
+            // console.log("from and to keys exist");
             
             let newNeighbors: Vertex[]  = [...(getNeighbors(graph,from).filter((n)=>{
 
                 let satisfy = (n.col !=to.col || n.row != to.row);
-                if(satisfy) console.log(n," is not equal to the new wall ", to);
+                // if(satisfy) console.log(n," is not equal to the new wall ", to);
                 
                 return satisfy;
             }))];
-            console.log("new ",from,"neighbors",newNeighbors);
+            // console.log("new ",from,"neighbors",newNeighbors);
             
             adjList.set(from,newNeighbors);
-            console.log("this is the new adjList", adjList);
+            // console.log("this is the new adjList", adjList);
             // setGraph(graph=>({...graph,numEdges: graph.numEdges-1, AdjList: newAdjList}))
             return adjList;
         }
@@ -177,11 +181,11 @@ function useGraph(cols?: number,rows?: number){
 
     function makeWall(v: Vertex){
             if(v.isWall) return;
-            console.log("making ",v,"Wall");
+            // console.log("making ",v,"Wall");
             let newAdjList: Map<Vertex,Vertex[]> = graph.AdjList;
             // let newAdjList: Map<Vertex,Vertex[]> = new Map<Vertex,Vertex[]>(graph.AdjList);
         
-            console.log(v,"neibors are",newAdjList.get(v));
+            // console.log(v,"neibors are",newAdjList.get(v));
             
             // let newNumEdges= graph.numEdges ;
             let removedEdgesCount = 0 ;
@@ -198,8 +202,8 @@ function useGraph(cols?: number,rows?: number){
 
             
 
-            console.log("old num of edges",graph.numEdges);
-            console.log("num of removed edges",removedEdgesCount);
+            // console.log("old num of edges",graph.numEdges);
+            // console.log("num of removed edges",removedEdgesCount);
             
 
             // switching isWall on
@@ -217,14 +221,14 @@ function useGraph(cols?: number,rows?: number){
      */
     function makeRoute(v: Vertex){
         if(!v.isWall) return;
-        console.log("USEGRAPH::: making ",v,"a route");
+        // console.log("USEGRAPH::: making ",v,"a route");
         
         let newAdjList = new Map(graph.AdjList);
         v.isWall = false;
         let neighbors: Vertex[] = getNeighborsInOrder(v);
         let edgesCount:number = neighbors.length;
         
-        console.log(v," neighbors are",neighbors);
+        // console.log(v," neighbors are",neighbors);
             
         // making the vertex neighbor to its neighbors
         neighbors.forEach(n=>{
@@ -241,10 +245,21 @@ function useGraph(cols?: number,rows?: number){
 
         // fillign the neighbors of the vertex
         newAdjList.set(v,neighbors);
-        console.log("USEGRAPH::: new ADJList",newAdjList);
+        // console.log("USEGRAPH::: new ADJList",newAdjList);
 
         let newWalls: Vertex[] = graph.walls.filter(w=>w!=v);
         setGraph(graph=>({...graph,numEdges: graph.numEdges+edgesCount, AdjList: newAdjList, walls: newWalls}))
+        }
+
+        function makeVisited(vertex: Vertex){
+            vertex.isVisited = true;
+            let newVisited: Vertex[];
+            setGraph(graph=>({...graph,visited: newVisited}))
+        }
+        function makePath(vertex: Vertex){
+            vertex.isPath = true;
+            let newPath: Vertex[] = []
+            setGraph(graph=>({...graph, path: newPath}))
         }
         
 
@@ -275,8 +290,8 @@ function useGraph(cols?: number,rows?: number){
     }
 
     function resetGraph(){
-        console.log("USEGRAPH::: Resetting the grid");
-        console.log("USEGRAPH::: Current walls", graph.walls);
+        // console.log("USEGRAPH::: Resetting the grid");
+        // console.log("USEGRAPH::: Current walls", graph.walls);
         if(cols!= undefined && rows != undefined)
         createGraphFromDimension(cols,rows); 
         // graph.walls.forEach(w=>{
@@ -292,7 +307,7 @@ function useGraph(cols?: number,rows?: number){
 
     // logging the graph changes
     useEffect(()=>{
-        console.log("USEGRAPH::: After setting the graph -=-=-=-=-=-=");
+        // console.log("USEGRAPH::: After setting the graph -=-=-=-=-=-=");
 
         // let trueNUmEdges = 0;
         // graph.AdjList.forEach((n,v)=>{
@@ -303,7 +318,7 @@ function useGraph(cols?: number,rows?: number){
         // console.log("***the true number of edges : ",trueNUmEdges);
         
         
-        console.log("USEGRAPH::: new graph ",graph);
+        // console.log("USEGRAPH::: new graph ",graph);
         
         // console.log(listHas({row: 0,col: 0,isWall}));
         // console.log(getNeighbors(graph,{row: 0,col:1} as Vertex) );
@@ -311,7 +326,7 @@ function useGraph(cols?: number,rows?: number){
     },[graph])
 
 
-    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, resetGraph};
+    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, makeVisited, makePath, resetGraph};
 }
 
 // ============== Helper Fnuctions =============
@@ -328,15 +343,15 @@ function useGraph(cols?: number,rows?: number){
     function getNeighbors(graph: Graph,v: Vertex): Vertex[]{
         let neighbors: Vertex[] = [];
         // getting the vertex with same reference
-        v = getVertex(graph, v);
+        // v = getVertex(graph, v);
 
-        if(graph.AdjList.get(v) != undefined)
+        if(graph.AdjList.get(v))
         neighbors = graph.AdjList.get(v)??[];
         else {
-            console.log("GET NEIGHBORS::: there is no neighbors for ",v);
+            // console.log("GET NEIGHBORS::: there is no neighbors for ",v);
             
         }
-        console.log("GET NEIGHBORS::: vertex is", v, "neighbors are",neighbors )
+        // console.log("GET NEIGHBORS::: vertex is", v, "neighbors are",neighbors )
         return neighbors;
     }
 
@@ -350,7 +365,7 @@ function useGraph(cols?: number,rows?: number){
         graph.verticesSet.forEach(v=>{
             if(v.col==target.col&&v.row==target.row){
                 found = v;
-                console.log("GET VERTEX::: found the vertex",found);
+                // console.log("GET VERTEX::: found the vertex",found);
                 
             }
         })
@@ -359,10 +374,10 @@ function useGraph(cols?: number,rows?: number){
 
     function listHas(list: Map<Vertex,Vertex[]>,v: Vertex): boolean{
         let found = false;
-        console.log("searching key",v);
+        // console.log("searching key",v);
         list.forEach((n,key)=>{
             if(key.col == v.col && key.row == v.row){
-                console.log("key found", key);
+                // console.log("key found", key);
                 found= true;
             }
         })
