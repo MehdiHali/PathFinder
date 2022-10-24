@@ -25,7 +25,7 @@ const Sidebar = ({className, onVisualize, onReset, setAlgo}:{className: string,o
     return <div className={" "+className}>
         <div style={{gap: "4px"}} className="flex flex-col items-start list-none p-8" onChange={handleChange}>
             shoose algorithm:
-            <select name="" id="" onChange={handleChange} className={"p-2 outline-none border-2 border-yellow-400 hover:border-dashed"}>
+            <select name="" id="" onChange={handleChange} className={"p-2 outline-none border-2 border-yellow-400 hover:border-dashed  cursor-pointer"}>
                 <option value="DFS">DFS</option>
                 <option value="BFS">BFS</option>
                 <option value="Dijkstra">Dijkstra</option>
