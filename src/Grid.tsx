@@ -7,7 +7,7 @@ import Mosque from './assets/Mosque.png'
 import Castle from './assets/Castle.png'
 import Location  from './assets/Location.png'
 import HomePin  from './assets/HomePin.png'
-import Home from './assets/Home.svg'
+import Home from './assets/home.png'
 import MyLocation  from './assets/MyLocation.png'
 import MinHeap from './Utils/Heap';
 import Queue from './Utils/Queue';

@@ -3,8 +3,8 @@ import Logo from './Components/Logo';
 import { action } from './Utils/types';
 import Mosque from './assets/Mosque.png'
 import Castle from './assets/Castle.png'
-import Eraser from './assets/Eraser.svg'
-import Home from './assets/Home.svg'
+import Eraser from './assets/eraser.png'
+import Home from './assets/home.png'
 import Location from './assets/Location.png'
 import MyLocation from './assets/MyLocation.png'
 
