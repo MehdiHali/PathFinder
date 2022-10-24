@@ -3,6 +3,7 @@ import Logo from './Components/Logo';
 import { action } from './Utils/types';
 import Mosque from './assets/Mosque.png'
 import Castle from './assets/Castle.png'
+import Home from './assets/Home.svg'
 import Location from './assets/Location.png'
 import MyLocation from './assets/MyLocation.png'
 
@@ -50,7 +51,7 @@ const Header = ({className, visualize, setAction, onClearGrid}: {className: stri
 
         <ToolBox<action> onChange={setAction} defaultValue={"WALL"}>
             <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
-                <img src={Castle} />
+                <img src={Home} />
             </ToolBox.Tool>
             <ToolBox.Tool selected={false} value={"START"}>
                 <img src={MyLocation} />

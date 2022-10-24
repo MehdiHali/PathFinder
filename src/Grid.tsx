@@ -7,6 +7,7 @@ import Mosque from './assets/Mosque.png'
 import Castle from './assets/Castle.png'
 import Location  from './assets/Location.png'
 import HomePin  from './assets/HomePin.png'
+import Home from './assets/Home.svg'
 import MyLocation  from './assets/MyLocation.png'
 import MinHeap from './Utils/Heap';
 import Queue from './Utils/Queue';
@@ -39,7 +40,7 @@ let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouse
             <div className={"w-full h-4 mx-auto grid content-center"}>
 
                     { 
-                    vertex.isWall ? <img className='w-6  mx-auto object-cover' src={Castle} />
+                    vertex.isWall ? <img className='w-6  mx-auto object-cover' src={Home} />
                     :isStart ? <img className='  mx-auto object-cover' src={MyLocation} />
                     :isGoal ? <img className='  mx-auto object-cover' src={HomePin} />
                     : ""
