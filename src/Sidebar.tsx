@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { algo } from "./Utils/types";
 
 
-const Sidebar = ({className, onVisualize, onReset, setAlgo}:{className: string,onVisualize: ()=>void, onReset: ()=>void, setAlgo: Dispatch<SetStateAction<algo>>})=>{
+const Sidebar = ({className, onVisualize, onReset, setAlgo, onClearGrid}:{className: string,onVisualize: ()=>void, onReset: ()=>void, setAlgo: Dispatch<SetStateAction<algo>> , onClearGrid: Dispatch<SetStateAction<boolean>>})=>{
 
     function handleVisualize(ev: any){
         ev.preventDefault();
@@ -35,6 +35,7 @@ const Sidebar = ({className, onVisualize, onReset, setAlgo}:{className: string,o
                 <button className="btn" onClick={handleVisualize} >Visualize</button>
                 <button className="btn" onClick={handleReset} >Reset</button>
             </div>
+        <button className='btn' onClick={()=>onClearGrid(true)} >Clear Grid</button>
         </div>
         <div className="text-left mt-10 h-fit text-xs ">
             Made with <strong className="text-red-400">Love</strong> by<br /> <a className="text-gray-600 font-bold uppercase text-sm hover:text-red-400 " target={"_blank"} href="https://linktr.ee/mehdi.hali" >Mehdi Ouled-Hali</a>

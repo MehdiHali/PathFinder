@@ -6,43 +6,10 @@ import Home from './assets/home.png'
 import Location from './assets/Location.png'
 import MyLocation from './assets/MyLocation.png'
 import GitHub from './assets/GitHub.svg'
-
-let ToolBoxContext = createContext({} as any);
-
-ToolBox.Tool = function Tool<T>({value, onClick, children}:{value: T, selected: boolean, onClick?: (value: T,...params: any[])=>void, children: ReactNode}){
-    // const [value,setValue] : [T, Dispatch<SetStateAction<T>>] = useState("" as T);
-
-    let {selected, setSelected} = useContext(ToolBoxContext);
-
-    return <li onClick={()=>{setSelected(value);onClick && onClick(value)}} className={"flex space-x-4 h-8 w-8 p-1 rounded-md cursor-pointer hover:border-2 border-yellow-400 hover:bg-slate-400 hover:border-dashed "+((selected === value)&&" bg-slate-400")}>
-            {children}
-        </li>
-}
+import ToolBox from './Utils/ToolBox';
 
 
-
-function ToolBox<T> ({onChange, defaultValue, children}:{onChange: Dispatch<SetStateAction<T>>, defaultValue: T, children: ReactNode}){
-
-    const [selected,setSelected]: [T, Dispatch<SetStateAction<T>>] = useState(defaultValue);
-
-    function handleChange(ev: any){
-        ev.preventDefault();
-        setSelected(ev.target.value);
-    }
-
-    useEffect(()=>{
-        onChange(selected);
-    }, [selected]);
-
-    return <ToolBoxContext.Provider value={{selected,setSelected}}>
-    
-            <div  onChange={handleChange} className={"flex items-center space-x-4 list-none "} >
-                {children}
-            </div>
-            </ToolBoxContext.Provider>
-}
-
-const Header = ({className, visualize, setAction, onClearGrid}: {className: string, visualize: boolean,setAction: Dispatch<SetStateAction<action>>, onClearGrid:Dispatch<SetStateAction<boolean>>})=>{
+const Header = ({className, visualize, setAction, setShowHelp}: {className: string, visualize: boolean,setAction: Dispatch<SetStateAction<action>>, setShowHelp: Dispatch<SetStateAction<boolean>>})=>{
 
 
     return <div className={'bg-gray-300 p-4 flex justify-between items-center px-8 '+className}>
@@ -64,7 +31,7 @@ const Header = ({className, visualize, setAction, onClearGrid}: {className: stri
         </ToolBox> 
 
         <span>{visualize?"Visualizing...":"Done!"}</span>
-        <button className='btn' onClick={()=>onClearGrid(true)} >Clear Grid</button>
+        <button className='btn' onClick={()=>{setShowHelp(true)}}>Help?</button>
         <a target="_blank" href={"https://github.com/MehdiHali/PathFinder"}><img src={GitHub} alt="" /></a>
     </div>
 }
