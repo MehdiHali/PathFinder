@@ -14,7 +14,7 @@ function App() {
     const [resetGrid, setResetGrid]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     const [clearGrid, setClearGrid]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     let [action,setAction]: [action: action,setAction: Dispatch<SetStateAction<action>>] = useState("WALL" as action);
-    let [algo,setAlgo]: [action: algo,setAction: Dispatch<SetStateAction<algo>>] = useState("DFS" as algo);
+    let [algo,setAlgo]: [action: algo,setAction: Dispatch<SetStateAction<algo>>] = useState("BFS" as algo);
 
     useEffect(()=>{
 
