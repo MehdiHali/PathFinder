@@ -35,7 +35,8 @@ let Cell = ({vertex,path, setWeight, start, goal,visited,action, onClick, onMous
                     vertex.isWall ? <img className='w-6  mx-auto object-cover' src={Home} />
                     :isStart ? <img className='  mx-auto object-cover' src={MyLocation} />
                     :isGoal ? <img className='  mx-auto object-cover' src={HomePin} />
-                    : <input type={"number"} defaultValue={0} className={"text-center w-full  h-full"}  />
+                    :""
+                    // : <input type={"number"} defaultValue={0} className={"text-center w-full  h-full"}  />
                     }
             </div>
         </span>

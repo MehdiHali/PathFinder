@@ -5,6 +5,7 @@ import Eraser from './assets/eraser.png'
 import Home from './assets/home.png'
 import Location from './assets/Location.png'
 import MyLocation from './assets/MyLocation.png'
+import GitHub from './assets/GitHub.svg'
 
 let ToolBoxContext = createContext({} as any);
 
@@ -16,7 +17,6 @@ ToolBox.Tool = function Tool<T>({value, onClick, children}:{value: T, selected: 
     return <li onClick={()=>{setSelected(value);onClick && onClick(value)}} className={"flex space-x-4 h-8 w-8 p-1 rounded-md cursor-pointer hover:border-2 border-yellow-400 hover:bg-slate-400 hover:border-dashed "+((selected === value)&&" bg-slate-400")}>
             {children}
         </li>
-
 }
 
 
@@ -45,13 +45,10 @@ function ToolBox<T> ({onChange, defaultValue, children}:{onChange: Dispatch<SetS
 const Header = ({className, visualize, setAction, onClearGrid}: {className: string, visualize: boolean,setAction: Dispatch<SetStateAction<action>>, onClearGrid:Dispatch<SetStateAction<boolean>>})=>{
 
 
-    return <div className={'bg-gray-300 p-4 flex justify-between items-center '+className}>
+    return <div className={'bg-gray-300 p-4 flex justify-between items-center px-8 '+className}>
         <Logo className={" w-32  object-contain"}/>
 
         <ToolBox<action> onChange={setAction} defaultValue={"WALL"}>
-            <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"SELECT"}>
-                <img src={Home} />
-            </ToolBox.Tool>
             <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
                 <img src={Home} />
             </ToolBox.Tool>
@@ -68,6 +65,7 @@ const Header = ({className, visualize, setAction, onClearGrid}: {className: stri
 
         <span>{visualize?"Visualizing...":"Done!"}</span>
         <button className='btn' onClick={()=>onClearGrid(true)} >Clear Grid</button>
+        <a target="_blank" href={"https://github.com/MehdiHali/PathFinder"}><img src={GitHub} alt="" /></a>
     </div>
 }
 

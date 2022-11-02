@@ -19,3 +19,7 @@ code {
 .btn{
   @apply border-2 border-yellow-400 hover:border-dashed  hover:bg-green-300 px-2 py-1 rounded ;
 }
+
+*{
+  @apply text-gray-800
+}

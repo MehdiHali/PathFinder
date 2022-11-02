@@ -22,12 +22,12 @@ const Sidebar = ({className, onVisualize, onReset, setAlgo}:{className: string,o
         setAlgo(ev.target.value);
     }
 
-    return <div className={" "+className}>
-        <div style={{gap: "4px"}} className="flex flex-col items-start list-none p-8" onChange={handleChange}>
+    return <div style={{display:"flex",flexDirection:"column",justifyContent:"space-between"}} className={"p-8 h-full flex flex-col justify-between "+className}>
+        <div style={{gap: "4px"}} className="flex flex-col items-start list-none " onChange={handleChange}>
             shoose algorithm:
             <select name="" id="" onChange={handleChange} className={"p-2 outline-none border-2 border-yellow-400 hover:border-dashed  cursor-pointer"}>
-                <option value="DFS">DFS</option>
                 <option value="BFS">BFS</option>
+                <option value="DFS">DFS</option>
                 <option value="Dijkstra">Dijkstra</option>
                 <option value="AStar">AStar</option>
             </select>
@@ -35,6 +35,10 @@ const Sidebar = ({className, onVisualize, onReset, setAlgo}:{className: string,o
                 <button className="btn" onClick={handleVisualize} >Visualize</button>
                 <button className="btn" onClick={handleReset} >Reset</button>
             </div>
+        </div>
+        <div className="text-left mt-10 h-fit text-xs ">
+            Made with <strong className="text-red-400">Love</strong> by<br /> <a className="text-gray-600 font-bold uppercase text-sm hover:text-red-400 " target={"_blank"} href="https://linktr.ee/mehdi.hali" >Mehdi Ouled-Hali</a>
+
         </div>
     </div>
 }

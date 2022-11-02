@@ -45,7 +45,7 @@ function App() {
     <div className="App h-screen min-h-screen">
      <Header  onClearGrid={setClearGrid} setAction={setAction} visualize={visualize} className={"h-[10%] bg-primary"}/>
      <div className='flex h-[90vh] '>
-      <Sidebar setAlgo={setAlgo} onVisualize={()=>!visualize&&setVisualize(true)} onReset={()=>setResetGrid(true)} className={"w-[20%] bg-primary hidden sm:block"} />
+      <Sidebar setAlgo={setAlgo} onVisualize={()=>!visualize&&setVisualize(true)} onReset={()=>setResetGrid(true)} className={" w-[20%] bg-primary hidden sm:block"} />
       <Grid algo={algo} triggerResetGrid={resetGrid} setResetGrid={setResetGrid} clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} visualize={visualize} setVisualize={setVisualize}  className={"w-full bg-gray-100 h-full"}/>
      </div>
     </div>
