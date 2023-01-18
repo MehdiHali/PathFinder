@@ -25,7 +25,7 @@ const Sidebar = ({className, onVisualize, onReset, setAlgo, onClearGrid}:{classN
 
     return <div style={{display:"flex",flexDirection:"column",justifyContent:"space-between"}} className={"p-8 h-full flex flex-col justify-between "+className}>
         <div style={{gap: "4px"}} className="flex flex-col items-start list-none " onChange={handleChange}>
-            shoose algorithm:
+            choose algorithm:
             <select name="" id="" onChange={handleChange} className={"p-2 outline-none border-2 border-yellow-400 hover:border-dashed  cursor-pointer"}>
                 <option value="BFS">BFS</option>
                 <option value="DFS">DFS</option>
