@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { algo } from "./Utils/types";
+import Cell from "./Cell";
 
 
 const Sidebar = ({className, onVisualize, onReset, setAlgo, onClearGrid}:{className: string,onVisualize: ()=>void, onReset: ()=>void, setAlgo: Dispatch<SetStateAction<algo>> , onClearGrid: Dispatch<SetStateAction<boolean>>})=>{
@@ -37,9 +38,16 @@ const Sidebar = ({className, onVisualize, onReset, setAlgo, onClearGrid}:{classN
             </div>
         <button className='btn' onClick={()=>onClearGrid(true)} >Clear Grid</button>
         </div>
+        <div>
+        <div className="h-24 mb-0 flex flex-col justify-end space-y-1">
+            <div className="flex items-center "><div className="w-8 h-8 bg-blue-200 mr-4"></div> visited </div><br />
+            <div className="flex items-center "><div className="w-8 h-8 bg-yellow-400 mr-4"></div> path</div>
+            {/* <Cell /> visited */}
+        </div>
         <div className="text-left mt-10 h-fit text-xs ">
             Made with <strong className="text-red-400">Love</strong> by<br /> <a className="text-gray-600 font-bold uppercase text-sm hover:text-red-400 " target={"_blank"} href="https://linktr.ee/mehdi.hali" >Mehdi Ouled-Hali</a>
 
+        </div>
         </div>
     </div>
 }
