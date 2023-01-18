@@ -51,17 +51,17 @@ function App() {
             <br /> use this tools to draw things on the map (grid)
             </p>
         <ToolBox<action> onChange={setAction} defaultValue={"WALL"} className=" mx-auto ">
-            <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
+            <ToolBox.Tool name="wall"  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
                 <img src={Home} />
             </ToolBox.Tool>
-            <ToolBox.Tool selected={false} value={"ROUTE"}>
+            <ToolBox.Tool name="eraser" selected={false} value={"ROUTE"}>
                 <img src={Eraser} />
             </ToolBox.Tool>
-            <ToolBox.Tool selected={false} value={"START"}>
-                <img src={MyLocation} />
-            </ToolBox.Tool>
-            <ToolBox.Tool selected={false} value={"GOAL"}>
+            <ToolBox.Tool name="start" selected={false} value={"START"}>
                 <img src={Location} />
+            </ToolBox.Tool>
+            <ToolBox.Tool name="goal" selected={false} value={"GOAL"}>
+                <img src={MyLocation} />
             </ToolBox.Tool>
         </ToolBox> 
         </div>

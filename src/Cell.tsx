@@ -1,5 +1,6 @@
 import HomePin  from './assets/HomePin.png'
 import Home from './assets/home.png'
+import Traffic from './assets/traffic.png'
 import MyLocation  from './assets/MyLocation.png'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { Vertex } from './Utils/useGraph'
@@ -33,8 +34,9 @@ let Cell = ({vertex,path, setWeight, start, goal,visited,action, onClick, onMous
 
                     { 
                     vertex.isWall ? <img className='w-6  mx-auto object-cover' src={Home} />
-                    :isStart ? <img className='  mx-auto object-cover' src={MyLocation} />
-                    :isGoal ? <img className='  mx-auto object-cover' src={HomePin} />
+                    :vertex.isTraffic ? <img className='w-6  mx-auto object-cover' src={Traffic} />
+                    :isStart ? <img className='  mx-auto object-cover' src={HomePin} />
+                    :isGoal ? <img className='  mx-auto object-cover' src={MyLocation} />
                     :""
                     // : <input type={"number"} defaultValue={0} className={"text-center w-full  h-full"}  />
                     }

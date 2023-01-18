@@ -8,9 +8,10 @@ interface Vertex {
     col: number,
     row: number,
     isWall: boolean
-    isVisited: boolean
-    isPath: boolean
-    weight: number
+    isTraffic: boolean,
+    isVisited: boolean,
+    isPath: boolean,
+    weight: number,
 }
 
 interface Graph {
@@ -115,7 +116,7 @@ function useGraph(cols?: number,rows?: number){
         for(let row = 0; row<rows; row++)
             for(let col = 0; col<cols; col++)
             {
-                let currVertex: Vertex = {row,col,isWall: false, isVisited: false, isPath: false, weight: 0};
+                let currVertex: Vertex = {row,col,isWall: false, isTraffic: false, isVisited: false, isPath: false, weight: 0};
                 newAdjList.set(currVertex , []);
                 // addVertex(currVertex)
                 verticesSet.add(currVertex);
@@ -224,6 +225,13 @@ function useGraph(cols?: number,rows?: number){
             // setStates into one to increase performance
             setGraph(graph=>({...graph,numEdges:graph.numEdges-removedEdgesCount,AdjList: newAdjList,walls: [...graph.walls,v]}));
     }
+
+    function makeTraffic(v: Vertex){
+        getVertex(graph,v).isTraffic = true;
+        setGraph(graph=>({...graph}))
+        console.log("made traffic");
+        
+    } 
 
     /**
      * Converts a wall to route vertex
@@ -343,7 +351,7 @@ function useGraph(cols?: number,rows?: number){
     },[graph])
 
 
-    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, makeVisited, setWeight, makePath, resetGraph};
+    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, makeVisited, makeTraffic, setWeight, makePath, resetGraph};
 }
 
 // ============== Helper Fnuctions =============

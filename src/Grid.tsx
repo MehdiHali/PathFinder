@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {useGraph,getVertex,Vertex, setToArray} from './Utils/useGraph'
 import { DFS } from './Utils/DFS';
 import { BFS } from './Utils/BFS';
-import { action, algo } from './Utils/types';
+import { DrawAction, action, algo } from './Utils/types';
 import Cell from './Cell';
 
 
@@ -11,7 +11,7 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
     const COLS = 30;
     const ROWS = 15;
     const SPEED = 1;
-    let {graph, makeWall, makeRoute, makeVisited, setWeight, makePath,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
+    let {graph, makeWall, makeRoute, makeTraffic, makeVisited, setWeight, makePath,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
     let [mouseDown,setMouseDown]= useState(false);
     let [searched, setSearched]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     let [path,setPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
@@ -161,18 +161,19 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
 
     function handleCellClick(vertex: Vertex){
         switch(action){
-            case 'WALL': ( !isStart(vertex) && !isGoal(vertex) ) && makeWall(vertex);break;
-            case 'ROUTE':  ( !isStart(vertex) && !isGoal(vertex) ) && makeRoute(vertex);break;
-            case 'START': (vertex !== start)&& setStart(vertex);break;
-            case 'GOAL': (vertex !== goal) && setGoal(vertex);break;
+            case DrawAction.WALL: ( !isStart(vertex) && !isGoal(vertex) ) && makeWall(vertex);break;
+            case DrawAction.TRAFFIC: ( !isStart(vertex) && !isGoal(vertex) ) && makeTraffic(vertex);break;
+            case DrawAction.ROUTE:  ( !isStart(vertex) && !isGoal(vertex) ) && makeRoute(vertex);break;
+            case DrawAction.START: (vertex !== start)&& setStart(vertex);break;
+            case DrawAction.GOAL: (vertex !== goal) && setGoal(vertex);break;
         }
     }
 
     return <div className={"p-4 "+className}>
     <div style={{gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`}} className='grid grid-cols-30 w-full h-full gap-1 '>
         {
-            // creating a cell for every vertex in the graph
-            setToArray(graph.verticesSet).map((v,i)=>{
+                // creating a cell for every vertex in the graph
+                setToArray(graph.verticesSet).map((v,i)=>{
                 return <Cell key={i} 
                 action={action}
                 goal={goal}
