@@ -21,14 +21,16 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
     let [DFSPath,setDFSPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [start, setStart]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState(new Vertex(1,1));
     let [goal, setGoal]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState(new Vertex(8,15));
+    let [showMsg, setShowMsg]: [boolean,Dispatch<SetStateAction<boolean>>] = useState(false);
     
     function handleMouseEnter(v: Vertex){
         if(mouseDown) handleCellClick(v);
     }
 
     useEffect(()=>{
-        // console.log("GRID::: Graph updated", graph);
-    },[graph])
+        if(path.length>0 && !showMsg) setShowMsg(true);
+        setTimeout(()=>setShowMsg(false),1000);
+    },[path])
 
 
     function triggerClearGrid(){
@@ -178,7 +180,16 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
     }
 
     return <div className={"p-4 "+className}>
-    <div style={{gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`}} className='grid grid-cols-30 w-full h-full gap-1 '>
+    <div style={{gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`}} className='relative grid grid-cols-30 w-full h-full gap-1 '>
+        {
+            visualize && <div className='absolute z-50 w-full h-full bg-transparent grid content-center border-2 border-blue-600 text-2xl'> <span className='bg-blue-400'> Searching...</span></div>
+        }
+        {
+           showMsg && <div className='absolute z-50 w-full h-full bg-transparent grid content-center border-2 border-green-400 text-2xl'> <span className='bg-green-400'> Found ! </span></div>
+        }
+        {
+           (path.length==0&&showMsg) && <div className='absolute z-50 w-full h-full bg-transparent grid content-center border-2 border-red-600 text-2xl'> <span className='bg-red-400'> Found ! </span></div>
+        }
         {
                 // creating a cell for every vertex in the graph
                 setToArray(graph.verticesSet).map((v,i)=>{
@@ -189,7 +200,6 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
                 path={path} 
                 visited={visited} 
                 vertex={v} 
-                // setWeight={v.setWeight}
                 onMouseDown={()=>{setMouseDown(true)}} 
                 onClick={()=>{handleCellClick(v)}} 
                 onMouseUp={()=>{setMouseDown(false)}} 
