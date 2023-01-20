@@ -2,8 +2,9 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {useGraph,getVertex,Vertex, setToArray} from './Utils/useGraph'
 import { DFS } from './Utils/DFS';
 import { BFS } from './Utils/BFS';
-import { action, algo } from './Utils/types';
+import { DrawAction, action, algo } from './Utils/types';
 import Cell from './Cell';
+import Dijkstra from './Utils/Dijkstra';
 
 
 function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisualize,action, clearGrid, setClearGrid}: {className: string, algo: algo, triggerResetGrid: boolean, setResetGrid: Dispatch<SetStateAction<boolean>>,visualize: boolean, action: action, clearGrid: boolean,setVisualize: Dispatch<SetStateAction<boolean>>,setClearGrid: Dispatch<SetStateAction<boolean>>}){
@@ -11,28 +12,27 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
     const COLS = 30;
     const ROWS = 15;
     const SPEED = 1;
-    let {graph, makeWall, makeRoute, makeVisited, setWeight, makePath,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
+    let {graph, makeWall, makeRoute, makeTraffic, makeVisited, makePath,resetGraph, graphLoaded} = useGraph(COLS,ROWS);
     let [mouseDown,setMouseDown]= useState(false);
     let [searched, setSearched]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     let [path,setPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [visited, setVisited]: [Vertex[], Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[])
     let [DFSVisited,setDFSVisited]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
     let [DFSPath,setDFSPath]: [Vertex[],Dispatch<SetStateAction<Vertex[]>>] = useState([] as Vertex[]);
-    let [start, setStart]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:5,row:4} as Vertex);
-    let [goal, setGoal]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState({col:15,row:6} as Vertex);
+    let [start, setStart]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState(new Vertex(1,1));
+    let [goal, setGoal]: [Vertex,Dispatch<SetStateAction<Vertex>>] = useState(new Vertex(8,15));
     
     function handleMouseEnter(v: Vertex){
         if(mouseDown) handleCellClick(v);
     }
 
     useEffect(()=>{
-        console.log("GRID::: Graph updated", graph);
-        
+        // console.log("GRID::: Graph updated", graph);
     },[graph])
 
 
     function triggerClearGrid(){
-        console.log("GRID::: Triggering clear grid");
+        // console.log("GRID::: Triggering clear grid");
         
             resetGraph();
             resetGrid();
@@ -53,7 +53,8 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
         switch(algo){
             case 'DFS': algoImpl = DFS;break;
             case 'BFS': algoImpl = BFS;break;
-            default: algoImpl = DFS;break;
+            case 'Dijkstra': algoImpl = Dijkstra;break;
+            default: algoImpl = BFS;break;
         }
         setSearched(true);
         // console.log("VIEW::: Searching Triggered"6;
@@ -66,7 +67,9 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
         {
         // console.log("VIEW::: INITIAL VISITED",visited);
             
-        let {DFSPath,DFSVisited} = algoImpl(
+        // console.log("about to start the search from",start,"to",goal);
+        
+        let {path,visited} = algoImpl(
             graph,
             getVertex(graph,start),
             getVertex(graph,goal),
@@ -76,13 +79,16 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
         
             // setSearchdone(true);
 
-            console.log("SEARCH DONE");
-            console.log("DFS VISITED", DFSVisited);
-            console.log("DFS PATH", DFSPath);
+            // console.log("SEARCH DONE");
+            // console.log(algoImpl,"VISITED", visited);
+            // console.log(algoImpl,"PATH", path);
             
             
-            setDFSVisited(DFSVisited);
-            setDFSPath(DFSPath);
+            if(path != undefined && visited != undefined)
+            {
+                setDFSVisited(visited);
+                setDFSPath(path);
+            }
 
         }
 
@@ -104,9 +110,8 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
     }
 
     useEffect(()=>{
-        console.log("GRID::: The new visited", visited);
-        console.log("GRID::: The new path", path);
-        
+        // console.log("GRID::: The new visited", visited);
+        // console.log("GRID::: The new path", path);
     },[visited,path])
 
     /**
@@ -114,8 +119,8 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
      * of the path
      */
     useEffect(()=>{
-        console.log("VIEW::: The new DFSVisited", DFSVisited);
-        console.log("VIEW::: The new DFSPath", DFSPath);
+        // console.log("VIEW::: The new DFSVisited", DFSVisited);
+        // console.log("VIEW::: The new DFSPath", DFSPath);
         
         if((DFSVisited.length > 0 )){
             let curr = DFSVisited.shift();
@@ -127,6 +132,9 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
                     if(curr!=undefined)
                     {
                         // makeVisited(curr);
+                        // console.log("setting visited");
+                        // console.log("DFSVisted before setting",DFSVisited);
+                        
                         setVisited(visited=>[...visited,curr??{} as Vertex]);
                     }
                 },SPEED);
@@ -161,18 +169,19 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
 
     function handleCellClick(vertex: Vertex){
         switch(action){
-            case 'WALL': ( !isStart(vertex) && !isGoal(vertex) ) && makeWall(vertex);break;
-            case 'ROUTE':  ( !isStart(vertex) && !isGoal(vertex) ) && makeRoute(vertex);break;
-            case 'START': (vertex !== start)&& setStart(vertex);break;
-            case 'GOAL': (vertex !== goal) && setGoal(vertex);break;
+            case DrawAction.WALL: ( !isStart(vertex) && !isGoal(vertex) ) && makeWall(vertex);break;
+            case DrawAction.TRAFFIC: ( !isStart(vertex) && !isGoal(vertex) ) && makeTraffic(vertex);break;
+            case DrawAction.ROUTE:  ( !isStart(vertex) && !isGoal(vertex) ) && makeRoute(vertex);break;
+            case DrawAction.START: (vertex !== start)&& setStart(vertex);break;
+            case DrawAction.GOAL: (vertex !== goal) && setGoal(vertex);break;
         }
     }
 
     return <div className={"p-4 "+className}>
     <div style={{gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`}} className='grid grid-cols-30 w-full h-full gap-1 '>
         {
-            // creating a cell for every vertex in the graph
-            setToArray(graph.verticesSet).map((v,i)=>{
+                // creating a cell for every vertex in the graph
+                setToArray(graph.verticesSet).map((v,i)=>{
                 return <Cell key={i} 
                 action={action}
                 goal={goal}
@@ -180,7 +189,7 @@ function Grid({className,algo,triggerResetGrid, setResetGrid,visualize, setVisua
                 path={path} 
                 visited={visited} 
                 vertex={v} 
-                setWeight={setWeight}
+                // setWeight={v.setWeight}
                 onMouseDown={()=>{setMouseDown(true)}} 
                 onClick={()=>{handleCellClick(v)}} 
                 onMouseUp={()=>{setMouseDown(false)}} 

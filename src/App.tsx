@@ -13,17 +13,33 @@ import Eraser from './assets/eraser.png'
 import Home from './assets/home.png'
 import Location from './assets/Location.png'
 import MyLocation from './assets/MyLocation.png'
+import { Vertex } from './Utils/useGraph';
+import BucketQueue from './Utils/BucketQueue';
 
 function App() {
 
     const [visualize, setVisualize]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     const [resetGrid, setResetGrid]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
     const [clearGrid, setClearGrid]: [boolean, Dispatch<SetStateAction<boolean>>] = useState(false);
+
     let [action,setAction]: [action: action,setAction: Dispatch<SetStateAction<action>>] = useState("WALL" as action);
     let [algo,setAlgo]: [action: algo,setAction: Dispatch<SetStateAction<algo>>] = useState("BFS" as algo);
     let [showHelp,setSHowHelp] = useState(true);
 
     useEffect(()=>{
+
+      let pq: BucketQueue = new BucketQueue();
+      pq.insert(new Vertex(0,10,undefined,undefined,undefined,undefined,1));
+      pq.insert(new Vertex(1,2,undefined,undefined,undefined,undefined,1));
+      pq.insert(new Vertex(5,9,undefined,undefined,undefined,undefined,0));
+
+      
+      console.log("peek:",pq.peek());
+      console.log("poll:",pq.poll());
+      console.log("peek:",pq.peek()); 
+      console.log("poll:",pq.poll());
+      console.log("poll:",pq.poll());
+      console.log("poll:",pq.poll());
 
     },[])
 
@@ -51,17 +67,17 @@ function App() {
             <br /> use this tools to draw things on the map (grid)
             </p>
         <ToolBox<action> onChange={setAction} defaultValue={"WALL"} className=" mx-auto ">
-            <ToolBox.Tool  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
+            <ToolBox.Tool name="wall"  /*onClick={setAction}*/ selected = {true} value={"WALL"}>
                 <img src={Home} />
             </ToolBox.Tool>
-            <ToolBox.Tool selected={false} value={"ROUTE"}>
+            <ToolBox.Tool name="eraser" selected={false} value={"ROUTE"}>
                 <img src={Eraser} />
             </ToolBox.Tool>
-            <ToolBox.Tool selected={false} value={"START"}>
-                <img src={MyLocation} />
-            </ToolBox.Tool>
-            <ToolBox.Tool selected={false} value={"GOAL"}>
+            <ToolBox.Tool name="start" selected={false} value={"START"}>
                 <img src={Location} />
+            </ToolBox.Tool>
+            <ToolBox.Tool name="goal" selected={false} value={"GOAL"}>
+                <img src={MyLocation} />
             </ToolBox.Tool>
         </ToolBox> 
         </div>

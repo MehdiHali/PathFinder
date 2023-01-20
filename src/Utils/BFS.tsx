@@ -1,15 +1,16 @@
 import Queue from "./Queue";
 import { Graph, Vertex, getNeighbors, getVertex } from "./useGraph";
 
-function BFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: any)=>void): { DFSPath: Vertex[]; DFSVisited: Vertex[]; } {
+function BFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: any)=>void): { path: Vertex[]; visited: Vertex[]; } {
 
-    console.log("BFS::: Start");
+    // console.log("BFS::: Start",start,goal,"graph",graph);
+    // console.log("BFS::: Start",start,goal);
     
 
     if(!graph.verticesSet.has(start) || !graph.verticesSet.has(goal))
     {
         // console.log("DFS:::: start or end vertex does not exist");
-        return {} as { DFSPath: Vertex[]; DFSVisited: Vertex[]; } ;
+        return {} as { path: Vertex[]; visited: Vertex[]; } ;
     }
 
     let path: Vertex[] = [];
@@ -23,7 +24,7 @@ function BFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
     // push(queue,)
     queue.push(start);
 
-                let visitedCount = 0;
+    let visitedCount = 0;
     while(queue.length > 0 && !found)
     {
 
@@ -38,25 +39,25 @@ function BFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
         }else{
             // console.log("DFS::: neighbors of current are", getNeighbors(graph,curr));
             // TODO ::: I think here is the problem
-                console.log("I think here is the problem");
+                // console.log("I think here is the problem");
                 // console.time("BFS::: processing neighbor");
             getNeighbors(graph,curr).forEach(n=>{ // O(n)
                 if(!visited.includes(n)){ // O(n)
                     queue.push(n);
                     visited.push(n);
                     visitedCount++;
-                    console.log("DFS::: visiting ",n);
+                    // console.log("DFS::: visiting ",n);
                     parentMap.set(n,curr);
                 }
             })
-                console.log("BFS::: visitedCount ",visitedCount);
+                // console.log("BFS::: visitedCount ",visitedCount);
         }
     }
 
     // console.log("DFS::: PARENT MAP", parentMap);
     if(found){
 
-        console.log("DFS::: Constructing path");
+        // console.log("DFS::: Constructing path");
         let curr = goal;
         path.push(curr);
         while(curr != start && curr != undefined){
@@ -73,7 +74,7 @@ function BFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
     
     
     // TODO reverse the array while filling them and not here
-    return {DFSPath:path, DFSVisited: visited};
+    return {path, visited};
 }
 
 export {BFS};

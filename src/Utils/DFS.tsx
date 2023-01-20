@@ -1,14 +1,14 @@
 import { Graph, Vertex, getNeighbors, getVertex } from "./useGraph";
 
-function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: any)=>void): { DFSPath: Vertex[]; DFSVisited: Vertex[]; } {
+function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: any)=>void): { path: Vertex[]; visited: Vertex[]; } {
 
-    console.log("DFS::: Start");
+    console.log("DFS::: Start",start,goal);
     
 
     if(!graph.verticesSet.has(start) || !graph.verticesSet.has(goal))
     {
         console.log("DFS:::: start or end vertex does not exist");
-        return {} as { DFSPath: Vertex[]; DFSVisited: Vertex[]; } ;
+        return {} as { path: Vertex[]; visited: Vertex[]; } ;
     }
 
     let path: Vertex[] = [];
@@ -69,7 +69,7 @@ function DFS(graph: Graph, start: Vertex, goal: Vertex, onSearch?: ( params?: an
     console.log("DFS::: the path is ", path);
     
     
-    return {DFSPath:path, DFSVisited: visited};
+    return {path,visited};
 }
 
 export {DFS};
