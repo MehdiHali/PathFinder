@@ -1,4 +1,3 @@
-import { freemem } from "os";
 import Node from "./Node";
 
 class Queue<T> {
@@ -43,6 +42,9 @@ class Queue<T> {
         this.length++;
     }
 
+    /**
+     * removes and return the head of the queue
+     */
     poll(): T | null{
         if(this.head)
         {

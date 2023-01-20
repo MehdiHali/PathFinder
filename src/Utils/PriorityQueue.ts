@@ -5,7 +5,7 @@ class PriorityQueue<T> {
     dataHeap: Heap<T> = new Heap();
     length: number = 0;
 
-    push(val: T): void{
+    add(val: T): void{
         this.dataHeap.insert(val);
         this.length++;
     }

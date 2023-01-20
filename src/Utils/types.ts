@@ -3,6 +3,9 @@ import { access } from "fs";
 
 declare type algo = "DFS"|"BFS"|"Dijkstra"|"AStart";
 type action = 'SELECT'|'WALL'|'ROUTE'|'START'|'GOAL';
+interface Prioritized {
+    priority: number;
+}
 
 abstract class DrawAction {
     static TRAFFIC: string = "TRAFFIC";
@@ -13,4 +16,4 @@ abstract class DrawAction {
     static GOAL: string = "GOAL";
 }
 
-export {type action,type algo, DrawAction};
+export {type action,type algo, type Prioritized, DrawAction};

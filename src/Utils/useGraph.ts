@@ -1,17 +1,38 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Set } from "typescript";
-// import {useStack, Stack} from './useStack';
+import { Prioritized } from "./types";
 
 
 
-interface Vertex {
-    col: number,
-    row: number,
+class Vertex implements Prioritized {
+    col: number;
+    row: number;
     isWall: boolean
-    isTraffic: boolean,
-    isVisited: boolean,
-    isPath: boolean,
-    weight: number,
+    isTraffic: boolean;
+    isVisited: boolean;
+    isPath: boolean;
+    private weight: number;
+    priority: number;
+
+    constructor(row: number,col: number,  isWall: boolean = false, isTraffic: boolean = false, isVisited: boolean = false, isPath: boolean = false, weight: number = 0){
+        this.col = col;
+        this.row = row;
+        this.isWall = isWall;
+        this.isTraffic = isTraffic;
+        this.isVisited = isVisited;
+        this.isPath = isPath;
+        this.weight = weight;
+        this.priority = weight;
+    }
+
+    setWeight(w: number){
+        this.weight = w;
+        this.priority = w;
+    }
+
+    equals(v: Vertex): boolean {
+        return (this.col == v.col && this.row == v.row);
+    }
 }
 
 interface Graph {
@@ -30,6 +51,9 @@ interface Graph {
  */
 
 /**
+ * @IMPORTANT make sure you never change the references to the attributes of the graph so that you can keeptrack of them and change them
+ * @IMPORTANT when you want to rerender then just set the graph with a new graph with same references of the previous graph
+ * 
  * @getVertex when you want to fetch a vertex an keeping the same reference 
  * use the @numVertices and @numEdges to trigger the rerenders
  * @CAUTION : if you add and remove an edge at the same time this won't change numEdges
@@ -82,8 +106,7 @@ function useGraph(cols?: number,rows?: number){
     }
 
     /** 
-     * every time you want to keep the same reference to the vertex 
-     * use this function to fetch it
+     * returns the vertex reference
      * */ 
     function getVertex(graph: Graph, target: Vertex){
         let found = {} as Vertex;
@@ -116,7 +139,7 @@ function useGraph(cols?: number,rows?: number){
         for(let row = 0; row<rows; row++)
             for(let col = 0; col<cols; col++)
             {
-                let currVertex: Vertex = {row,col,isWall: false, isTraffic: false, isVisited: false, isPath: false, weight: 0};
+                let currVertex: Vertex =new Vertex(row,col,false, false, false, false,1);
                 newAdjList.set(currVertex , []);
                 // addVertex(currVertex)
                 verticesSet.add(currVertex);
@@ -128,20 +151,33 @@ function useGraph(cols?: number,rows?: number){
 
                 if(v.row > 0){
                     // console.log("CREATING GRAPH::: pushing neighbor", getVertex(graph,{row: v.row-1, col:v.col} as Vertex));
+                    if(!getVertex(newGraph,{row: v.row-1, col:v.col} as Vertex))
+                    console.log("FOUND EMPTY ======================",v);
+                    
                     
                     neighbors.push(getVertex(newGraph,{row: v.row-1, col:v.col} as Vertex)); 
                     numEdges++;
                 }
                 if(v.col > 0){
+
+                    if(!getVertex(newGraph,{row: v.row, col:v.col-1} as Vertex))
+                    console.log("FOUND EMPTY ======================",v);
+
                     neighbors.push(getVertex(newGraph,{row: v.row, col:v.col-1} as Vertex)); 
                     numEdges++;
                 }
                 if(v.row < rows-1){
+                    if(!getVertex(newGraph,{row: v.row+1, col:v.col} as Vertex))
+                    console.log("FOUND EMPTY ======================",v);
+
+
                     neighbors.push(getVertex(newGraph,{row: v.row+1, col:v.col} as Vertex)); 
                     numEdges++;
                 }
                 if(v.col < cols-1){
                     // console.log(v.col,"less than",cols-1);
+                    if(!getVertex(newGraph,{row: v.row, col:v.col+1} as Vertex))
+                    console.log("FOUND EMPTY ======================",v);
                     
                     neighbors.push(getVertex(newGraph,{row: v.row, col:v.col+1} as Vertex)); 
                     numEdges++;
@@ -156,41 +192,38 @@ function useGraph(cols?: number,rows?: number){
     }
 
     // remove the edge from the list without triggering rerender
-    function removeEdge(adjList: Map<Vertex,Vertex[]>,from: Vertex, to: Vertex){
-        from = getVertex(graph,from);
+    function removeEdge(graph: Graph,from: Vertex, to: Vertex){
+        // from = getVertex(graph,from);
         // console.log("removing edge from",from,"to",to);
         
         // console.log("from nei",getNeighbors(graph,from),'to nei',adjList.get(to));
         
         
-        if(adjList.has(from)) {
+        if(graph.AdjList.has(from)) {
             // console.log("from and to keys exist");
-            
             let newNeighbors: Vertex[]  = [...(getNeighbors(graph,from).filter((n)=>{
-
                 let satisfy = (n.col !=to.col || n.row != to.row);
                 // if(satisfy) console.log(n," is not equal to the new wall ", to);
-                
                 return satisfy;
             }))];
             // console.log("new ",from,"neighbors",newNeighbors);
-            
-            adjList.set(from,newNeighbors);
+            graph.AdjList.set(from,newNeighbors);
             // console.log("this is the new adjList", adjList);
             // setGraph(graph=>({...graph,numEdges: graph.numEdges-1, AdjList: newAdjList}))
-            return adjList;
+            return graph.AdjList;
         }
 
     }
 
 
-    function setWeight(vertex: Vertex, weight: number){
-        getVertex(graph,vertex).weight = weight;
-        setGraph({...graph, updateSwitcher: !graph.updateSwitcher});
-    }
+    // function setWeight(vertex: Vertex, weight: number){
+    //     getVertex(graph,vertex).weight = weight;
+    //     setGraph({...graph, updateSwitcher: !graph.updateSwitcher});
+    // }
 
     function makeWall(v: Vertex){
             if(v.isWall) return;
+            makeRoute(v);
             // console.log("making ",v,"Wall");
             let newAdjList: Map<Vertex,Vertex[]> = graph.AdjList;
             // let newAdjList: Map<Vertex,Vertex[]> = new Map<Vertex,Vertex[]>(graph.AdjList);
@@ -201,14 +234,14 @@ function useGraph(cols?: number,rows?: number){
             let removedEdgesCount = 0 ;
 
             // removing all the edges comming to v
-            newAdjList.get(v)?.forEach((n)=>{
-                removeEdge(newAdjList,getVertex(graph,n) ,v);
+            graph.AdjList.get(v)?.forEach((n)=>{
+                removeEdge(graph,n ,v);
                 removedEdgesCount++;
             })
 
             // removing the edges of the wall
             removedEdgesCount = removedEdgesCount + (newAdjList.get(v)?.length??0);
-            newAdjList.set(v,[]);
+            graph.AdjList.set(v,[]);
 
             
 
@@ -217,19 +250,22 @@ function useGraph(cols?: number,rows?: number){
             
 
             // switching isWall on
-            getVertex(graph,v).isWall = true;
+            v.isWall = true;
 
             // - even though we are mutating the same adjList
             // the decrease in the number of edges will trigger the setState rerender
             // - even tough we are calling the setGraph every time, React will batch those 
             // setStates into one to increase performance
-            setGraph(graph=>({...graph,numEdges:graph.numEdges-removedEdgesCount,AdjList: newAdjList,walls: [...graph.walls,v]}));
+            setGraph(graph=>({...graph}));
     }
 
     function makeTraffic(v: Vertex){
-        getVertex(graph,v).isTraffic = true;
+        makePath(v)
+        v.isTraffic = true;
+        v.setWeight(0);
+        
         setGraph(graph=>({...graph}))
-        console.log("made traffic");
+        console.log("made traffic",v);
         
     } 
 
@@ -237,11 +273,13 @@ function useGraph(cols?: number,rows?: number){
      * Converts a wall to route vertex
      */
     function makeRoute(v: Vertex){
-        if(!v.isWall) return;
-        // console.log("USEGRAPH::: making ",v,"a route");
+        if(!v.isWall && !v.isTraffic) return;
+        console.log("USEGRAPH::: making ",v,"a route");
         
         let newAdjList = new Map(graph.AdjList);
         v.isWall = false;
+        v.isTraffic = false;
+        v.setWeight(1);
         let neighbors: Vertex[] = getNeighborsInOrder(v);
         let edgesCount:number = neighbors.length;
         
@@ -249,23 +287,24 @@ function useGraph(cols?: number,rows?: number){
             
         // making the vertex neighbor to its neighbors
         neighbors.forEach(n=>{
-            if(!newAdjList.get(n)?.includes(v)){
+            if(!graph.AdjList.get(n)?.includes(v)){
                 // IMPORTANT
                 // WE MUST INSERT THE NEIGHBORS IN ORDERS
                 // BECAUSE IF WE JUST PUSHED THE VERTEX
                 // WE WILL MESS THE ORDER
                 let nNeighbors = getNeighborsInOrder(n);
-                newAdjList.set(n,nNeighbors);
+                graph.AdjList.set(n,nNeighbors);
             }
             // newAdjList.get(n)?.push(v);
         })
 
         // fillign the neighbors of the vertex
-        newAdjList.set(v,neighbors);
+        graph.AdjList.set(v,neighbors);
         // console.log("USEGRAPH::: new ADJList",newAdjList);
 
-        let newWalls: Vertex[] = graph.walls.filter(w=>w!=v);
-        setGraph(graph=>({...graph,numEdges: graph.numEdges+edgesCount, AdjList: newAdjList, walls: newWalls}))
+        graph.walls = graph.walls.filter(w=>w!=v);
+        graph.numEdges += edgesCount
+        setGraph(graph=>({...graph}))
         }
 
         function makeVisited(vertex: Vertex){
@@ -351,8 +390,12 @@ function useGraph(cols?: number,rows?: number){
     },[graph])
 
 
-    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, makeVisited, makeTraffic, setWeight, makePath, resetGraph};
+    return {graph: graph,graphLoaded, createGraphFromDimension, makeWall, makeRoute, makeVisited, makeTraffic,  makePath, resetGraph};
 }
+
+
+
+
 
 // ============== Helper Fnuctions =============
 
@@ -370,12 +413,12 @@ function useGraph(cols?: number,rows?: number){
         // getting the vertex with same reference
         // v = getVertex(graph, v);
 
+        // if the vertex has neighbors then assign them to the array
         if(graph.AdjList.get(v))
         neighbors = graph.AdjList.get(v)??[];
-        else {
+        // else {
             // console.log("GET NEIGHBORS::: there is no neighbors for ",v);
-            
-        }
+        // }
         // console.log("GET NEIGHBORS::: vertex is", v, "neighbors are",neighbors )
         return neighbors;
     }
@@ -411,4 +454,4 @@ function useGraph(cols?: number,rows?: number){
     
 
 
-export  {useGraph, getNeighbors, getVertex, listHas, setToArray, type Graph, type Vertex};
+export  {useGraph, getNeighbors, getVertex, listHas, setToArray, type Graph, Vertex};
