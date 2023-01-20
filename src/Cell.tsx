@@ -24,7 +24,7 @@ let Cell = ({vertex,path, start, goal,visited,action, onClick, onMouseUp,onMouse
         <span 
         onMouseDown={onMouseDown}
         onMouseEnter={onMouseEnter} 
-        // onMouseUp={()=>{console.log("Mouse is Up");onMouseUp()}} 
+        onMouseUp={()=>{console.log("Mouse is Up");onMouseUp()}} 
         onClick={()=>{console.log("making",vertex,action); onClick()}} 
         className={" select-none grid content-center object-cover text-xs relative hover:scale-125 hover:border-yellow-400  border border-blue-400 overflow-hidden "+ (vertex.isWall?" border-slate-500":isStart?" border-green-400":isGoal?" border-red-400":isPath?" bg-yellow-400":isVisited?" bg-blue-200":"") } >
             {/* <p  className=' select-none  '>
