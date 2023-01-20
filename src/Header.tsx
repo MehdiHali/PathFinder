@@ -17,7 +17,7 @@ const Header = ({className, visualize, setAction, setShowHelp}: {className: stri
     return <div className={'bg-gray-300 p-4 flex justify-between items-center px-8 '+className}>
         <Logo className={" w-32  object-contain"}/>
 
-        <ToolBox<action> onChange={setAction} defaultValue={"WALL"} className='pr-48'>
+        <ToolBox<action> onChange={setAction} defaultValue={"WALL"} className='pr-80'>
             <ToolBox.Tool name="wall"  /*onClick={setAction}*/ selected = {true} value={DrawAction.WALL}>
                 <img src={Home} />
             </ToolBox.Tool >
@@ -35,7 +35,7 @@ const Header = ({className, visualize, setAction, setShowHelp}: {className: stri
             </ToolBox.Tool>
         </ToolBox> 
 
-        <span>{visualize?"Visualizing...":"Done!"}</span>
+        {/* <span>{visualize?"Visualizing...":"Done!"}</span> */}
         <button className='btn' onClick={()=>{setShowHelp(true)}}>Help?</button>
         <a target="_blank" href={"https://github.com/MehdiHali/PathFinder"}><img src={GitHub} alt="" /></a>
     </div>

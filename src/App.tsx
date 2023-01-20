@@ -2,19 +2,19 @@ import './App.css';
 import Header from './Header';
 import Grid from './Grid';
 import Sidebar from './Sidebar';
-import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
-import { action, algo } from './Utils/types';
+import { Dispatch,  SetStateAction, useEffect, useState } from 'react';
+import { DrawAction, action, algo } from './Utils/types';
 import Modal from './Modal';
 import ToolBox from './Utils/ToolBox';
 
 
-import Logo from './Components/Logo';
 import Eraser from './assets/eraser.png'
+import Traffic from './assets/traffic.png'
 import Home from './assets/home.png'
 import Location from './assets/Location.png'
 import MyLocation from './assets/MyLocation.png'
-import { Vertex } from './Utils/useGraph';
-import BucketQueue from './Utils/BucketQueue';
+
+
 
 function App() {
 
@@ -26,22 +26,6 @@ function App() {
     let [algo,setAlgo]: [action: algo,setAction: Dispatch<SetStateAction<algo>>] = useState("BFS" as algo);
     let [showHelp,setSHowHelp] = useState(true);
 
-    useEffect(()=>{
-
-      let pq: BucketQueue = new BucketQueue();
-      pq.insert(new Vertex(0,10,undefined,undefined,undefined,undefined,1));
-      pq.insert(new Vertex(1,2,undefined,undefined,undefined,undefined,1));
-      pq.insert(new Vertex(5,9,undefined,undefined,undefined,undefined,0));
-
-      
-      console.log("peek:",pq.peek());
-      console.log("poll:",pq.poll());
-      console.log("peek:",pq.peek()); 
-      console.log("poll:",pq.poll());
-      console.log("poll:",pq.poll());
-      console.log("poll:",pq.poll());
-
-    },[])
 
     // useEffect(()=>{
     //   setTimeout(()=>{
@@ -59,7 +43,7 @@ function App() {
     <div className="App h-screen min-h-screen">
       {
         showHelp &&
-      <Modal className=" border-8 border-orange-400  ">
+      <Modal className=" border-8 border-orange-400 pb-0 ">
         <button className='absolute top-0 right-0 p-2 w-10 hover:bg-gray-200' onClick={()=>setSHowHelp(false)}>X</button>
         <h2 className='text-blue-400 font-black text-2xl'>How it works ?</h2>
         <div className='flex flex-col items-center space-y-8'>
@@ -79,14 +63,20 @@ function App() {
             <ToolBox.Tool name="goal" selected={false} value={"GOAL"}>
                 <img src={MyLocation} />
             </ToolBox.Tool>
+            <ToolBox.Tool name="traffic" selected={false} value={DrawAction.TRAFFIC}>
+                <img src={Traffic} />
+            </ToolBox.Tool>
         </ToolBox> 
         </div>
+        <button className='bottom-0 px-4 py-2 m-2 text-center  hover:bg-gray-200' onClick={()=>setSHowHelp(false)}>{"<"}</button>
+        <button className='bottom-0 px-4 py-2 m-2 text-center  hover:bg-gray-200' onClick={()=>setSHowHelp(false)}>OK</button>
+        <button className='bottom-0 px-4 py-2 m-2 text-center  hover:bg-gray-200' onClick={()=>setSHowHelp(false)}>{">"}</button>
       </Modal>
       }
      <Header setShowHelp={setSHowHelp} setAction={setAction} visualize={visualize} className={"h-[10%] bg-primary"}/>
      <div className='flex h-[90vh] '>
       <Sidebar onClearGrid={setClearGrid}  setAlgo={setAlgo} onVisualize={()=>!visualize&&setVisualize(true)} onReset={()=>setResetGrid(true)} className={" w-[20%] bg-primary hidden sm:block"} />
-      <Grid algo={algo} triggerResetGrid={resetGrid} setResetGrid={setResetGrid} clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} visualize={visualize} setVisualize={setVisualize}  className={"w-full bg-gray-100 h-full"}/>
+      <Grid algo={algo} visualize={visualize} triggerResetGrid={resetGrid} setResetGrid={setResetGrid} clearGrid={clearGrid} setClearGrid={setClearGrid} action={action} setVisualize={setVisualize}  className={"w-full bg-gray-100 h-full"}/>
      </div>
     </div>
   );
